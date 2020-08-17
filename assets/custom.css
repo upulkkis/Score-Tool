@@ -1,0 +1,562 @@
+/*
+body {
+  background-image: url("./assets/logo.png") !important;
+  background-color: #363636;
+  color: white;
+  font-family: Arial, Helvetica, sans-serif;
+}*/
+
+/*
+/* Tällä ohjataan vasemman valikon aloitusjuttua, vaikea käyttää?? */
+/*
+@media (min-width: 768px) {
+  .content-wrapper, .content-wrapper:before,
+  .main-footer,
+  .main-footer:before,
+  .main-header,
+  .main-header:before {
+    margin-left: 0;
+  }
+} !important
+*/
+/*
+.content-wrapper {
+transform: scale(0.7);
+transform: translate3d(0px, 0px, 0px);
+width: 150%;
+}
+*/
+
+/* Allow resizable boxes  */
+
+/*
+.card {
+resize: both;
+overflow: auto;
+}
+*/
+.vf-stavenote .vf-modifiers text:hover{
+cursor: pointer;
+font-size: 15px;
+}
+
+.vf-stavenote .vf-modifiers text:active{
+cursor: pointer;
+font-size: 14px;
+}
+
+.orch_drpdwn button{
+width: 97%;
+background-image: linear-gradient(#515960, #515960 60%, #515960) !important;
+color: #aaa;
+}
+
+
+.orch_drpdwn div{
+transform: none !important;
+}
+
+
+.addinst_btn{
+background-image: linear-gradient(#eed, #eed 60%, #eec);
+border-radius:0;
+}
+
+.addinst_btn:hover{
+background-image: linear-gradient(#eed, #eea 60%, #eeb) !important;
+}
+
+/* Masking tutorial selector handle*/
+#Sound_loudness div .rc-slider-handle {
+width: 45px !important;
+height: 25px !important;
+margin-left: -20px !important;
+border-radius: 10% !important;
+border: 5px solid sienna !important;
+}
+
+#Sound_loudness {
+width: 70px !important;
+}
+
+/* Score range selector handle: */
+#score_range div .rc-slider-handle {
+width: 20px !important;
+height: 35px !important;
+border: 3px solid sienna !important;
+border-radius: 10% !important;
+margin-top: -15px !important;
+}
+
+.modal-xl {
+max-width: 90vw !important;
+}
+
+.chordSelector * {
+background-image: linear-gradient(#8a9196, #7A8288 60%, #70787d); !important;
+border: 0 !important;
+text-align: center;
+text-shadow: 1px 1px black;
+/*padding: 2px;
+margin: 1px;*/
+color: white !important;
+}
+
+/*
+.card-header > .card-tools{
+width: 500px;
+display: inline-block;
+}
+
+.card-header > .card-tools button{
+display: inline-block;
+}
+
+.card-header > .card-tools div{
+display: inline-block;
+}
+*/
+
+.chordSelector:active * {
+background-image: linear-gradient(#8a9196, #7A8288 60%, #70787d); !important;
+text-align: center;
+}
+
+/*
+.chordSelector div .Select-arrow-zone .Select-arrow{
+background-color: white !important;
+color: white !important;
+z-order: 1000;
+}
+*/
+
+.chordSelector div div div div:hover{
+background-image: linear-gradient(#8a9196, #7A8288 60%, #60686d); !important;
+}
+
+/* Style dropdown menus */
+
+#instrument-input div .Select-control{
+background-color: rgba(0,0,0,0) !important;
+border: 0 !important;
+}
+#dynamics-input div .Select-control{
+background-color: rgba(0,0,0,0) !important;
+border: 0 !important;
+}
+#techs-input div .Select-control{
+background-color: rgba(0,0,0,0) !important;
+border: 0 !important;
+}
+#notes-input div .Select-control{
+background-color: rgba(0,0,0,0) !important;
+border: 0 !important;
+}
+
+#instrument-inputone div .Select-control{
+background-color: rgba(0,0,0,0) !important;
+border: 0 !important;
+}
+#dynamics-inputone div .Select-control{
+background-color: rgba(0,0,0,0) !important;
+border: 0 !important;
+}
+#techs-inputone div .Select-control{
+background-color: rgba(0,0,0,0) !important;
+border: 0 !important;
+}
+#notes-inputone div .Select-control{
+background-color: rgba(0,0,0,0) !important;
+border: 0 !important;
+}
+
+#instrument-inputtwo div .Select-control{
+background-color: rgba(0,0,0,0) !important;
+border: 0 !important;
+}
+#dynamics-inputtwo div .Select-control{
+background-color: rgba(0,0,0,0) !important;
+border: 0 !important;
+}
+#techs-inputtwo div .Select-control{
+background-color: rgba(0,0,0,0) !important;
+border: 0 !important;
+}
+#notes-inputtwo div .Select-control{
+background-color: rgba(0,0,0,0) !important;
+border: 0 !important;
+}
+
+
+#notes-input div div div .Select-placeholder{
+color:red;
+animation: blinker 0.5s step-start infinite;
+}
+#notes-inputone div div div .Select-placeholder{
+color:red;
+animation: blinker 0.5s step-start infinite;
+}
+#notes-inputtwo div div div .Select-placeholder{
+color:red;
+animation: blinker 0.5s step-start infinite;
+}
+
+#techs-input div div div .Select-placeholder{
+color:red;
+animation: blinker 0.5s step-start infinite;
+}
+
+#dynamics-input div div div .Select-placeholder{
+color:red;
+animation: blinker 0.5s step-start infinite;
+}
+
+/* Highlight noteheads under cursor, excluding stems */
+
+#pianoroll_graph div svg .vf-stavenote:hover :not(.vf-stem) > path{
+stroke: black;
+fill: black;
+stroke-width: 10;
+}
+
+#inst_sel .dropdown-menu.show {
+width:600px;
+line-height:0.8;
+display: flex;
+height: 250px;
+align-content: flex-start;
+align-items: flex-start;
+flex-flow: column wrap;
+    transform: translate3d(91px, -100px, 0px) !important;
+/*flex-wrap: wrap;*/
+}
+
+#inst_sel .dropdown-menu.show * {
+height: 20px;
+width:150px;
+/*flex: 1 1 160px;*/
+flex: 10%;
+}
+
+#inst_selone .dropdown-menu.show {
+width:600px;
+line-height:0.8;
+display: flex;
+height: 250px;
+align-content: flex-start;
+align-items: flex-start;
+flex-flow: column wrap;
+    transform: translate3d(91px, -100px, 0px) !important;
+/*flex-wrap: wrap;*/
+}
+
+#inst_selone .dropdown-menu.show * {
+height: 20px;
+width:150px;
+/*flex: 1 1 160px;*/
+flex: 10%;
+}
+
+#inst_seltwo .dropdown-menu.show {
+width:600px;
+line-height:0.8;
+display: flex;
+height: 250px;
+align-content: flex-start;
+align-items: flex-start;
+flex-flow: column wrap;
+    transform: translate3d(91px, -100px, 0px) !important;
+/*flex-wrap: wrap;*/
+}
+
+#inst_seltwo .dropdown-menu.show * {
+height: 20px;
+width:150px;
+/*flex: 1 1 160px;*/
+flex: 10%;
+}
+
+/*
+#inst_sel .dropdown-menu.show #\{\"index\"\:\"horn\"\,\"type\"\:\"orch_l\"\}{
+flex: 30%;
+}
+*/
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
+
+
+/*
+.Select--single>.Select-control .Select-value, .Select-placeholder {
+    bottom: 0;
+    color: #aaa;
+    left: 0;
+    line-height: 34px;
+    padding-left: 10px;
+    padding-right: 10px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+*/
+
+#edit div div .streamHolding svg text {
+transform: translate(-10px,-80px);
+}
+
+.popover {
+background-color: rgba(0,0,0,0) !important;
+max-width: 600px;
+}
+
+._dash-loading {
+    visibility: hidden;
+}
+
+._dash-loading:after {
+  content:'Orchestration analyzer database is loading, please wait for a few seconds...';
+  visibility: visible;
+  text-align: center;
+  color: black;
+  display: block;
+  font-size: 200%;
+  animation:blinkingText 1.2s infinite;
+  background-color: gray;
+  padding: 5px;
+  top: 2px;
+}
+
+@keyframes blinkingText{
+    0%{     color: #000;    }
+    49%{    color: #000; }
+    60%{    color: transparent; }
+    99%{    color:transparent;  }
+    100%{   color: #000;    }
+}
+
+.displaynone_cust {
+display: none !important;
+}
+
+.progressbody_cust {
+  justify-content: center;
+  align-items: center;
+  background-color: primary;
+  display: flex;
+  height: 10vh;
+  padding: 0;
+  margin: 0;
+}
+
+.progress_cust {
+  background: rgba(90,90,90,0.4);
+  justify-content: flex-start;
+  border-radius: 100px;
+  align-items: center;
+  position: relative;
+  padding: 0 5px;
+  display: flex;
+  height: 40px;
+  width: 600px;
+  /*--waitingtime: 5s;*/
+}
+
+.progress-value {
+   animation: load var(--waitingtime) normal forwards;
+  box-shadow: 0 10px 40px -10px sienna;
+  border-radius: 100px;
+  background: sienna;
+  height: 30px;
+  width: 0;
+}
+
+@keyframes load {
+
+  0% { width: 0; }
+  100% { width: 100%; }
+}
+
+
+.main-header {
+  color: black !important;
+}
+
+.navbar-nav {
+/* font-size:30px !important; */
+top: -15 !important;
+align-items: top !important;
+vertical-align: top;
+color: black !important;
+
+/*background-color: #eed !important;*/
+}
+
+/* Tällä saa muutettua navbarin ikonit*/
+.navbar-nav .nav-link {
+opacity: 1 !important;
+top:-4px;
+padding-top: 0;
+padding-bottom: 4;
+font-size:24px !important;
+color: #686845 !important;
+/* color: rgb(90,120,90) !important; */
+}
+.nav-link:hover, nav-link:focus, navbar-toggler:hover, navbar-toggler:focus{
+/*font-size:32px !important;*/
+/*color: lightgray !important;*/
+/*background-color: rgb(170,170,170) !important;*/
+background-color: #eed !important;
+color: #686845 !important;
+background-image: none !important;
+/*color: black !important;*/
+/*color: rgb(120,90,90) !important;
+/* color: rgb(90,120,90) !important;
+border:0 !important;
+  border-color: white white white; */
+}
+.nav-link:active, navbar-toggler:active{
+background-color: #eed !important;
+font-size:14px;
+}
+/*
+.navbar-dark .navbar-text a:hover, .navbar-dark .navbar-text a:focus  {
+  color: white !important;
+  background-color: white !important;
+}
+*/
+
+/*
+.navbar-dark:focus,  .navbar-dark:hover{
+  background-color: white !important;
+  color: white !important;
+  border: 0;
+  border-color: white white white;
+}
+*/
+
+.nav-tabs .nav-link:hover, .nav-tabs .nav-link:focus {
+  color: white;
+  background-color: white;
+}
+.nav-sidebar {
+  position: relative;
+}
+
+/* Tällä muuttuu valikon fontit */
+.nav-sidebar > .nav-item .nav-icon {
+font-size:30px !important;
+}
+
+/* Tällä muuttuu oikean valikon fontit */
+.control-sidebar {
+
+}
+.main-sidebar, .main-sidebar:before {
+  transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out;
+  width: 250px;
+}
+
+
+.animation {
+/*  width: 100px;
+  height: 100px;
+  background: red; */
+  position: relative;
+  animation: mymove 20s infinite;
+  animation-direction: alternate;
+}
+
+@keyframes mymove {
+  0%   {left: 0px; top: 0px;}
+  10% {transform:rotate(5deg)}
+  25%  {left: 5px; top: 0px;}
+  50%  {left: -5px; top: -5px;}
+  60% {transform:rotate(-5deg)}
+  75%  {left: 0px; top: -5px;}
+  100% {left: 0px; top: 0px;}
+}
+
+.bootstrap-switch .bootstrap-switch-handle-on {
+  color: red;
+  background: #ff9933;
+}
+
+.customNavbar {
+font-size: 30;
+color: black !important;
+backgroundColor: black !important;
+}
+
+.customNavbar .navbar-sidebar-icon {
+color: black !important;
+backgroundColor: black !important;
+textAlign: center;
+}
+
+.customControlbar {
+background-color: black !important;
+color: black!important;
+}
+
+.whiteText {
+color: white;
+}
+.dropDown {
+background-color: gray;
+color: #202020 !important;
+width: 200px;
+}
+.dropDown:hover {
+background-color: #202020;
+color: gray!important;
+}
+
+/* SLIDER STYLE */
+.rc-slider-track {
+  background-color: #e1b382;
+  width: 30px /*!important; */
+}
+.rc-slider {
+background-color: black !important;
+/*width: 40px !important; */
+}
+.rc-slider-rail {
+background-color: black !important;
+}
+.rc-slider-dot {
+background-color: black;
+color: black !important;
+border-color:  black !important;
+}
+.rc-slider-dot-active {
+background-color: black !important;
+  border-color:  black !important;
+  border: solid 0px green;
+}
+.rc-slider-handle {
+width: 20px !important;
+height: 20px !important;
+  background-color: #e1b382;  /* SAND COLOR */
+  border-color: #e1b382;
+        border: none;
+      borderRadius: 3px;
+      boxShadow: none !imporatnt;
+}
+.rc-slider-handle:hover {
+  border-color: green !important;
+}
+.rc-slider-handle-active:active {
+  border-color: green !important;
+  border: solid 2px grey !important;;
+}
+
+.custom_notepointer {
+cursor: url("./assets/mouse_guide.svg"), auto;
+}

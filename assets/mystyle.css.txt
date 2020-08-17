@@ -1,0 +1,443 @@
+body {
+ /*background-image: url("./assets/background.png") !important;*/
+  background-color: black;
+  color: lightgrey;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.button {
+    display: block;
+    width: 100%;
+    background-color: black; /* CHANGE THE COLOUR HERE */
+    font-size: 26px;
+    color: grey;
+    border-style: none;
+}
+.button:active {
+    display: block;
+    width: 100%;
+    background-color: black; /* CHANGE THE COLOUR HERE */
+    font-size: 26px;
+    color: grey;
+    border-style: none;
+}
+/*.button:hover {
+    font-size: 28px;
+}*/
+.button:focus {
+    outline: 0px !important;
+    border-style: none;
+}
+.block {
+  display: block;
+  width: 100%;
+  border: none;
+  background-color: #4CAF50;
+  color: white;
+  padding: 14px 28px;
+  font-size: 16px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.custom-tab {
+    background-color: black !important; /* CHANGE THE COLOUR HERE */
+    border-style: none;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    color: grey !important;
+    padding: 0px 0px;
+}
+
+.custom-tabs {
+    border-top-left-radius: 3px !important;
+    background-color: black; /* CHANGE THE COLOUR HERE */
+    color: black !important;
+    padding: 0px 0px !important;
+}
+
+.custom-tab--selected {
+    color: grey !important;
+    /*background: black; /* CHANGE THE COLOUR HERE */
+    background-color: #101010 !important;
+    box-shadow: 0px 0px 0px grey !important;
+    border-left: 0px solid black !important;
+    border-right: 0px solid black !important;
+    border-top: 0px solid black !important;
+
+}
+
+.animation {
+/*  width: 100px;
+  height: 100px;
+  background: red; */
+  position: relative;
+  animation: mymove 20s infinite;
+  animation-direction: alternate;
+}
+
+@keyframes mymove {
+  0%   {left: 0px; top: 0px;}
+  10% {transform:rotate(5deg)}
+  25%  {left: 5px; top: 0px;}
+  50%  {left: -5px; top: -5px;}
+  60% {transform:rotate(-5deg)}
+  75%  {left: 0px; top: -5px;}
+  100% {left: 0px; top: 0px;}
+}
+
+.fadein{
+animation: fadein 5s;
+}
+
+@keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+/*UNCOMMENT THIS TO GET "LOADING" INDICATOR!!!!
+/*
+*[data-dash-is-loading="true"]{
+    visibility: hidden;
+}
+*[data-dash-is-loading="true"]::before{
+    display: block;
+    width: 100%;
+    content: "Loading...";
+    text-align: center;
+    color: lightgrey;
+    visibility: visible;
+    animation: mymove2 2s infinite;
+    animation-direction: alternate;
+}
+*/
+
+.waiting[data-dash-is-loading="true"]{
+    visibility: hidden;
+}
+
+.waiting[data-dash-is-loading="true"]::after{
+    display: block;
+    width: 100%;
+    content: "Loading...";
+    text-align: center;
+    color: lightgrey;
+    visibility: visible;
+    animation: mymove2 2s infinite;
+    animation-direction: alternate;
+}
+
+@keyframes mymove2 {
+  0%   {left: 0px; top: 0px;}
+  25%  {left: 10px; top: 0px;transform:rotate(10deg)}
+  50%  {left: 0px; top: 0px;transform:rotate(00deg)}
+  75%  {left: -10px; top: 0px;transform:rotate(-10deg)}
+  100% {left: 0px; top: 0px;transform:rotate(0deg)}
+}
+
+/* The switch - the box around the slider
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+/* Hide default HTML checkbox
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+*/
+
+.Select-value-label {
+    background-color: black;
+    color: grey !important;
+    opacity: 1;
+    padding: 0px;
+    margin: 0px;
+    bottom: -10px;
+    vertical-align: bottom;
+    border: none;
+   /*-webkit-appearance: none;
+   -moz-appearance: none;
+   appearance: none;       /* Remove default arrow */
+   /* background-image: url(...);    Add custom arrow */
+}
+.Select-menu {
+    background-color: black;
+    color: grey;
+    opacity: 1;
+    padding: 0px;
+    margin: 0px;
+    bottom: -10px;
+    vertical-align: bottom;
+    border: none;
+   /*-webkit-appearance: none;
+   -moz-appearance: none;
+   appearance: none;       /* Remove default arrow */
+   /* background-image: url(...);    Add custom arrow */
+}
+.Select-menu-outer {
+    background-color: black;
+    color: grey;
+    opacity: 1;
+    padding: 0px;
+    margin: 0px;
+    top: -30px;
+    vertical-align: bottom;
+    border: none;
+   /*-webkit-appearance: none;
+   -moz-appearance: none;
+   appearance: none;       /* Remove default arrow */
+   /* background-image: url(...);    Add custom arrow */
+}
+.select::first-child { background-color: transparent; color: red; }
+.select::placeholder { background-color: transparent; color: red; }
+.select::selection { background-color: transparent; color: red; }
+option:first-of-type { background-color: transparent; color: red; }
+option:not(:first-of-type) {
+  color: red;
+}
+select:required:invalid {
+  color: white;
+}
+
+/* SLIDER STYLE */
+.rc-slider-track {
+  background-color: #e1b382;
+  width: 30px /*!important; */
+}
+.rc-slider {
+background-color: black !important;
+/*width: 40px !important; */
+}
+.rc-slider-rail {
+background-color: black !important;
+}
+.rc-slider-dot {
+background-color: black;
+color: black !important;
+border-color:  black !important;
+}
+.rc-slider-dot-active {
+background-color: black !important;
+  border-color:  black !important;
+  border: solid 0px green;
+}
+.rc-slider-handle {
+width: 20px !important;
+height: 20px !important;
+  background-color: #e1b382;  /* SAND COLOR */
+  border-color: #e1b382;
+        border: none;
+      borderRadius: 3px;
+      boxShadow: none !imporatnt;
+}
+.rc-slider-handle:hover {
+  border-color: green !important;
+}
+.rc-slider-handle-active:active {
+  border-color: green !important;
+  border: solid 2px grey !important;;
+}
+/*
+
+/*Volume slider */
+.vol-slider-track {
+  background-color: #e1b382;  /* SAND COLOR */ !important;
+  width: 30px !important;
+   margin-bottom: 0 !important;
+   padding: 0 !important;
+
+}
+.vol-slider {
+background-color: grey !important;
+    width: 40px !important;
+   margin-bottom: 0 !important;
+}
+.vol-rail {
+background-color: #e1b382;  /* SAND COLOR */ !important;
+   margin: 0 !important;
+}
+.vol-dot-active {
+  border-color: green;
+  border: solid 0px green;
+     margin: 0 !important;
+}
+.vol-handle {
+width: 40px !important;
+height: 40px !important;
+  background-color: green;
+  border-color: green;
+}
+.vol-handle:hover {
+  border-color: green;
+}
+.vol-handle-active:active {
+  border-color: green;
+  border: solid 2px grey !important;;
+}
+
+/* */
+
+.select option:first-child{
+  background-color: black; color: white;
+}
+
+::placeholder {
+  color: white;
+}
+
+option {
+  color: white;
+}
+*/
+
+/* CSS PIANO!!!
+
+// Responsive Sizing
+// (currently optimized for horizontal scaling)
+$keyboard_Width:  80vw;
+$keyboard_Height: ($keyboard_Width * 0.18  );
+$border_Width:    ($keyboard_Width * 0.0015);
+$whiteKey_Count:  21;
+$whiteKey_Height: $keyboard_Height;
+$whiteKey_Width:  ($keyboard_Width / $whiteKey_Count);
+$blackKey_Height: ($whiteKey_Height * 0.55);
+$blackKey_Width:  ($whiteKey_Width  * 0.55);
+$blackKey_Offset: (-($blackKey_Width / 2) - $border_Width);
+
+$whiteKey_Color:       #CBCBCB;
+$blackKey_Color:       #222222;
+$blackKey_BorderColor: #000000;
+$whiteKey_BorderColor: #AAAAAA;
+
+html{
+	height: 100%;
+}
+
+body{
+	height:           100%;
+	display:          flex;
+	margin:           auto;
+	justify-content:  center;
+	align-items:      center;
+	background-color: #111;
+}
+
+.key{
+	float:    left;
+	position: relative;
+}
+
+.white{
+	height:           $whiteKey_Height;
+	width:            $whiteKey_Width;
+	z-index:          1;
+	border-top:       $border_Width solid $whiteKey_BorderColor;
+	border-bottom:    $border_Width solid $whiteKey_BorderColor;
+	border-left:      $border_Width solid $whiteKey_BorderColor;
+	background-color: $whiteKey_Color;
+}
+
+.black{
+	height:           $blackKey_Height;
+	width:            $blackKey_Width;
+	z-index:          2;
+	border:           $border_Width solid $blackKey_BorderColor;
+	background-color: $blackKey_Color;
+}
+
+.a, .b, .d, .e, .g, .black{
+	margin: 0 0 0 $blackKey_Offset;
+}
+
+#keyboard > .note:last-child{
+	border-right: $border_Width solid $whiteKey_BorderColor;
+}
+background-color: #ffffff;
+padding-bottom: 1%;
+}
+ piano ends */
+ .toggle {
+ outline-color: black !important;
+ color: black !important;
+  background-color: black !important;
+  border-color: black !important;
+}
+
+.custom-slider-handle {
+  background-color: red;
+  border-color: red;
+}
+
+/* GRID LAYOUT PROPS */
+
+.masking { grid-area: main; }
+.teksti { grid-area: menu; }
+.mfcc { grid-area: header; }
+.gauge { grid-area: right; }
+.bar1 { grid-area: footer-left; }
+.bar2 { grid-area: footer-mid; }
+.bar3 { grid-area: footer-right; }
+.empty {grid-area: footer; }
+
+.grid-container {
+  display: grid;
+  grid-template-areas:
+    'main main main main right menu'
+    'footer-left footer-mid footer-right footer header header';
+  grid-gap: 10px;
+  text-align: center;
+  /*background-color: #2196F3;*/
+  padding: 10px;
+}
+
+.grid-container > div {
+  /*background-color: rgba(255, 255, 255, 0.8);*/
+  text-align: center;
+  /*padding: 20px 0;*/
+  /*font-size: 30px;*/
+}
+
+/* Grid props end */

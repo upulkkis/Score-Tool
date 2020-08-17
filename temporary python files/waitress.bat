@@ -1,0 +1,1 @@
+waitress-serve --port=8050 --url-scheme=https admin_comp_test:app.server

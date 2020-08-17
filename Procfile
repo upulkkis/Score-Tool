@@ -1,0 +1,1 @@
+web: gunicorn admin_comp_test:server --timeout 600

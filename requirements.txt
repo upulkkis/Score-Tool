@@ -1,0 +1,14 @@
+gunicorn>=19.7.1
+plotly>=2.0.9
+dash>=0.17.4
+dash-renderer>=0.7.2
+dash-html-components>=0.6.0
+dash-core-components>=0.5.0
+dash_daq>=0.5.0
+dash_bootstrap_components==0.10.0
+dash_admin_components==0.1.4
+score-component==0.4.9
+pretty_midi==0.2.9
+librosa==0.7.2
+visdcc==0.0.40
+music21==5.1.0
