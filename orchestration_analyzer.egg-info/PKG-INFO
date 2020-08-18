@@ -1,0 +1,19 @@
+Metadata-Version: 2.1
+Name: orchestration-analyzer
+Version: 0.5
+Summary: An orchestration analysis tool for composers, conductors, musicians and music theorists
+Home-page: https://github.com/upulkkis/orchestration-analyzer
+Author: Uljas Pulkkis
+Author-email: uljas.pulkkis@gmail.com
+License: MIT
+Description: 
+        Orchestration Analyzer - An orchestration analysis tool for composers, conductors, musicians and music therists
+        Copyright (c) 2020 Uljas Pulkkis
+        
+        This is an app for my doctoral project. You can use it online: orchestrationanalyer.herokuapp.com or install with pip and launch from your own machine.
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.7.6
+Description-Content-Type: text/markdown

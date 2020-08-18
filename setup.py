@@ -40,7 +40,7 @@ setuptools.setup(
     ],
 	scripts=['bin.app'],
     entry_points={
-    'console_scripts': ['orchan=bin.app:app.run_server(debug=False, threaded=True)'],
+    'console_scripts': ['orchan=bin.app:server'],
     },
     python_requires='>=3.7.6',
 )

@@ -1,0 +1,59 @@
+README.md
+setup.cfg
+setup.py
+bin/__init__.py
+bin/app.py
+chord/__init__.py
+chord/add_chord_element_list.py
+chord/chord_db_to_color.py
+chord/chord_testing.py
+chord/maskingCurve.py
+chord/maskingCurve_peakInput.py
+chord/masking_slice.py
+compare/__init__.py
+compare/compare.py
+compare/test_instrument_input.py
+help/__init__.py
+help/get_help.py
+helpers/__init__.py
+helpers/assignDynamics.py
+helpers/assign_clef.py
+helpers/assign_dyns.py
+helpers/assign_midi_name.py
+helpers/constants.py
+helpers/dyn_to_vel.py
+helpers/findPeaks.py
+helpers/get_fft.py
+helpers/hertz_to_microtone.py
+helpers/instrument_input.py
+helpers/sort_for_vexflow.py
+helpers/vel_to_color.py
+orchestration_analyzer.egg-info/PKG-INFO
+orchestration_analyzer.egg-info/SOURCES.txt
+orchestration_analyzer.egg-info/dependency_links.txt
+orchestration_analyzer.egg-info/entry_points.txt
+orchestration_analyzer.egg-info/requires.txt
+orchestration_analyzer.egg-info/top_level.txt
+score/__init__.py
+score/combine_peaks.py
+score/converters.py
+score/feature_slice.py
+score/masking_warning_color.py
+score/new_masking_slice.py
+score/revised_score_analyze.py
+score/score_graphs_from_graph_data.py
+score/score_testing.py
+temporary python files/MFCC.py
+temporary python files/__init__.py
+temporary python files/lpc_coeffs.py
+temporary python files/machine_learning_test.py
+temporary python files/make_mini_database.py
+temporary python files/maskingCurve_output_all.py
+temporary python files/node_menu.py
+temporary python files/normalize_sound_file.py
+temporary python files/piano test.py
+temporary python files/test.py
+temporary python files/wavReadTest.py
+temporary python files/zip_test.py
+tutorial/__init__.py
+tutorial/masking_example.py

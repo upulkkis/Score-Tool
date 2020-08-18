@@ -1,0 +1,8 @@
+bin
+chord
+compare
+help
+helpers
+score
+temporary python files
+tutorial
