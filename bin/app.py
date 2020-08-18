@@ -32,9 +32,9 @@ else:
 
 
 ##LOAD IMAGES
-image_filename = './assets/score.jpg' # Orchestration Analyzer logo
+image_filename = './bin/assets/score.jpg'  # Test score png
 score_image = base64.b64encode(open(image_filename, 'rb').read())
-image_filename = './assets/logo.png' # Orchestration Analyzer logo
+image_filename = './bin/assets/logo.png'  # Orchestration Analyzer logo
 logo_image = base64.b64encode(open(image_filename, 'rb').read())
 
 ## Create Navbar right hand menu

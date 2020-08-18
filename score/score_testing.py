@@ -1472,7 +1472,7 @@ def score(app, orchestra):
             saveAs(blob, "orchestration.score");
             };
             
-            loadScript("./assets/FileSaver.js", downloader);
+            loadScript("./bin/assets/FileSaver.js", downloader);
                 '''
             return script
         raise PreventUpdate
@@ -1557,7 +1557,7 @@ def score(app, orchestra):
             Pablo(svg).load(svg).download('png', 'score.png')
             };
             
-            loadScript("./assets/pablo.min.js", myPrettyCode);
+            loadScript("./bin/assets/pablo.min.js", myPrettyCode);
             '''
 
         return ""
