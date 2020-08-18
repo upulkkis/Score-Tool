@@ -39,8 +39,8 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
 	scripts=['bin.app'],
-    entry_points="""
-    orchan=bin.app:app.run_server(debug=False, threaded=True)
-    """,
+    entry_points={
+    'console_scripts': ['orchan=bin.app:app.run_server(debug=False, threaded=True)'],
+    },
     python_requires='>=3.7.6',
 )
