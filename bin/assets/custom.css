@@ -321,7 +321,7 @@ max-width: 600px;
 }
 
 ._dash-loading:after {
-  content:'Orchestration analyzer database is loading, please wait for a few seconds...';
+  content:'Score Tool database is loading, please wait for a few seconds...';
   visibility: visible;
   text-align: center;
   color: black;

@@ -32,8 +32,8 @@ else:
 
 
 ##LOAD IMAGES
-image_filename = './bin/assets/score.jpg'  # Test score png
-score_image = base64.b64encode(open(image_filename, 'rb').read())
+## image_filename = './bin/assets/score.jpg'  # Test score png
+## score_image = base64.b64encode(open(image_filename, 'rb').read())
 image_filename = './bin/assets/logo.png'  # Orchestration Analyzer logo
 logo_image = base64.b64encode(open(image_filename, 'rb').read())
 
@@ -67,7 +67,7 @@ right_ui = dac.NavbarDropdown(
 ## Create the Navbar
 
 navbar = dac.Navbar(id='navbar',color = '#afaf88',
-                    text='\xa0 \xa0 \xa0 \xa0 \xa0 \xa0 Orchestration Analyzer - an artificial intelligence in music orchestration',
+                    text='\xa0 \xa0 \xa0 \xa0 \xa0 \xa0 Score Tool - an artificial intelligence in music orchestration',
                     skin='light',
                     fixed= True,
                     sidebar_icon='bars',

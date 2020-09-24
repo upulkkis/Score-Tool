@@ -1,6 +1,6 @@
 import dash_html_components as html
 import base64
-image_filename = '.\dissertation\pulkkis_sm.png' # Orchestration Analyzer logo
+image_filename = './dissertation/pulkkis_sm.png' # Picture of me
 encoded_image2 = base64.b64encode(open(image_filename, 'rb').read())
 def aboutText():
     text = html.Div(children=[html.Img(src='data:image/png;base64,{}'.format(encoded_image2.decode()),

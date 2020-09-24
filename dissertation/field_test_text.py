@@ -6,15 +6,15 @@ def imageload(img_path):
     img_l = img_path
     img_l = base64.b64encode(open(img_l, 'rb').read())
     return img_l
-im1 = imageload('.\dissertation\image1.png')
-im2 = imageload('.\dissertation\image2.png')
-im3 = imageload('.\dissertation\image3.png')
-im4 = imageload('.\dissertation\image4.png')
-im5 = imageload('.\dissertation\image5.png')
-im6 = imageload('.\dissertation\image6.png')
-im7 = imageload('.\dissertation\image7.png')
-im8 = imageload('.\dissertation\image8.png')
-im9 = imageload('.\dissertation\image9.png')
+im1 = imageload('./dissertation/image1.png')
+im2 = imageload('./dissertation/image2.png')
+im3 = imageload('./dissertation/image3.png')
+im4 = imageload('./dissertation/image4.png')
+im5 = imageload('./dissertation/image5.png')
+im6 = imageload('./dissertation/image6.png')
+im7 = imageload('./dissertation/image7.png')
+im8 = imageload('./dissertation/image8.png')
+im9 = imageload('./dissertation/image9.png')
 
 def field_test_text():
     return html.Div([dcc.Markdown(children='''
