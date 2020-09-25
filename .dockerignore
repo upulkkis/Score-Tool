@@ -1,0 +1,14 @@
+# Reference: https://codefresh.io/docker-tutorial/not-ignore-dockerignore-2/
+.git
+.gitignore
+
+
+# Ignore all *.md and *.rst files in all folders, including build root
+**/*.md
+**/*.rst
+
+LICENSE
+
+Dockerfile*
+docker-compose*
+Makefile
