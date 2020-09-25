@@ -71,9 +71,10 @@ navbar = dac.Navbar(id='navbar',color = '#afaf88',
                     skin='light',
                     fixed= True,
                     sidebar_icon='bars',
-                    controlbar_icon = 'clipboard',
+                    # controlbar_icon = 'clipboard',
+                    controlbar_icon = 'question-circle',
 					border=False,
-                    children=[html.Div('© Uljas Pulkkis 2020'), right_ui],
+                    children=[html.Div('© Uljas Pulkkis 2020')], #right_ui],
 					)
 
 ## Create Sidebar menus
@@ -93,7 +94,7 @@ sidebar = dac.Sidebar(
 			dac.SidebarMenuItem(id='Diss_APP', label='Orchestration', icon='list', children='', style={'color': '#eed'}),
 		]
 	),
-    title='Analyzer App',
+    title='Analyzer tools',
 	skin="light",
     color="black",
 	brand_color="#afaf88",
@@ -108,10 +109,26 @@ sidebar = dac.Sidebar(
 controlbar = dac.Controlbar(
 	[
 		html.Br(),
-		html.P("Instrumentation here"),
+		#html.P("Instrumentation here"),
+		dbc.DropdownMenuItem(
+			id='start_help',
+			children=" Getting started",
+		),
+		dbc.DropdownMenuItem(
+			id='chord_help',
+			children=" Chord",
+		),
+		dbc.DropdownMenuItem(
+			id='score_help',
+			children=" Score",
+		),
+		dbc.DropdownMenuItem(
+			id='compare_help',
+			children=" Compare",
+		),
 	],
 	id = 'control_bar',
-	title = "Edit orchestration",
+	title = "General help",
 	skin = "dark",
 	style = {'color': 'white', 'backgroundColor':'#eed', 'position': 'fixed', 'overflow':'scroll'}
 )
@@ -200,7 +217,7 @@ help_toast = dbc.Toast("Help content here",
                 dismissable=True,
                 icon="success",
                 # top: 66 positions the toast below the navbar
-                style={"position": "fixed", "top": 66, "right": 50, "width": 350,},
+                style={"position": "fixed", "top": 66, "right": 250, "width": 350,},
 				body_style=	{'color':'black',
 					   'backgroundColor':'secondary',
 					   },

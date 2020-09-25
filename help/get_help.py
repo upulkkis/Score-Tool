@@ -6,12 +6,12 @@ def general():
         html.Div('This is a web app targeted to composers, conductors, musicians and musicologists interested in orchestration. '),
         html.Br(),
         html.Div('The main focus of the app is on masking and blending properties of the music.'),
+        #html.Br(),
+        #html.Div('The on important icon on the top right corner is the clipboard icon:'),dac.Icon(icon='clipboard'),
+        #html.Div('it holds your current orchestration with edit properties in all cases.'),
         html.Br(),
-        html.Div('The on important icon on the top right corner is the clipboard icon:'),dac.Icon(icon='clipboard'),
-        html.Div('it holds your current orchestration with edit properties in all cases.'),
-        html.Br(),
-        html.Div('Try first open the chord app:'), dac.Icon(icon='edit'),
-        html.Div('Add a few instruments, set one as target and see wheter your target instrument is audible or not. Modify then your orchestration by pressing the clipboard button, and see the changes on graphs.')
+        html.Div('Try first to open the chord app:'), dac.Icon(icon='edit'),
+        html.Div('Add a few instruments, set one as target and see wheter your target instrument is audible or not. Modify then your orchestration by clickin the `Click to check or modify your orchestration` -button, and see the changes in graphs.')
     ])
 
 def help(topic='No help yet :('):
