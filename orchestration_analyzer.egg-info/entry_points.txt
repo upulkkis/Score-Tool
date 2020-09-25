@@ -1,3 +1,0 @@
-[console_scripts]
-orchan = bin.app:server
-
