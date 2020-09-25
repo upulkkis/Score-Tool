@@ -1,7 +1,7 @@
 ## Orchestration Analyzer by Uljas Pulkkis 2020
 
 ## Wether to use production server or not
-Production = False
+Production = True
 
 if Production:
 	import os
