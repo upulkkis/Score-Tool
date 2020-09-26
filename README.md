@@ -6,7 +6,7 @@ Copyright (c) 2020 Uljas Pulkkis.
 ## How do I use it?
 This is an app for analyzing orchestral scores in your browser. You can use it online or install with pip and launch from your own machine.
 
-### Online version supported by Sibelius Academy of Music:
+### Online version supported by the Sibelius Academy of Music:
 www.score-tool.com
 
 ### Local – pip
@@ -16,7 +16,7 @@ $ score-tool
 # Go to localhost:8050 on your browser
 ```
 
-### Local – Docker
+### Local – Docker (Thank you, Seyoung Park, for Docker!)
 ```bash
 $ git clone git@github.com:upulkkis/Score-Tool.git
 $ cd Score-Tool

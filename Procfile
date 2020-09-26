@@ -1,1 +1,1 @@
-web: gunicorn bin.app:server --timeout 600
+web: gunicorn score-tool:run --timeout 600
