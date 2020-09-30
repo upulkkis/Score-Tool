@@ -1,4 +1,4 @@
-
+﻿
 # Score Tool 
 An orchestration analysis tool for composers, conductors, musicians and music theorists.
 Copyright (c) 2020 Uljas Pulkkis.
@@ -28,6 +28,7 @@ $ make docker-run
 ### Local – Native
 ```bash
 $ git clone git@github.com:upulkkis/Score-Tool.git
+# (or withouth ssh: git clone https://github.com/upulkkis/Score-Tool.git)
 $ cd Score-Tool
 $ pip3 install -r requirements.txt
 $ python3 score-tool.py
