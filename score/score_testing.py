@@ -107,7 +107,7 @@ def score(app, orchestra):
 
         from helpers import assign_midi_name
         for i in range(length):
-            if midi_data.instruments[i].program != 0:
+            if midi_data.instruments[i].program != -1: #Change from 0 to -1, prevented people from loading scores
                 instrument = midi_data.instruments[i]
                 valid_instruments.append(i)
                 score_name = instrument.name
