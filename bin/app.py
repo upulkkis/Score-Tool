@@ -18,6 +18,8 @@ import visdcc
 import base64
 from help import get_help
 import pickle
+from flask_caching import Cache
+import uuid
 
 with open('./database/no_data_orchestra.pickle', 'rb') as handle:
     orchestra = pickle.load(handle)
@@ -30,6 +32,11 @@ else:
 	app = dash.Dash(__name__)
 	server = app.server
 
+CACHE_CONFIG={'CACHE_TYPE':'redis', 'CACHE_REDIS_URL': 'redis://localhost:6379'}
+
+
+cache=Cache()
+cache.init_app(server,config=CACHE_CONFIG)
 
 ##LOAD IMAGES
 ## image_filename = './bin/assets/score.jpg'  # Test score png
@@ -63,6 +70,9 @@ right_ui = dac.NavbarDropdown(
 	],
 	className='whiteText',
 )
+
+def create_uuid():
+	return str(uuid.uuid4())
 
 ## Create the Navbar
 
@@ -306,9 +316,10 @@ app.title = 'Orchestration_Analyzer'
 
 main_content=dac.Page([navbar, sidebar, controlbar, body])
 
-app.layout = html.Div([main_content], style={
-'backgroundColor':'#eed',
-})
+def serve_layout():
+	return html.Div([html.Div(create_uuid(), id="user_uuid", style={'display':'none'}), main_content], style={'backgroundColor':'#eed',})
+
+app.layout = serve_layout
 
 # =============================================================================
 # Run app

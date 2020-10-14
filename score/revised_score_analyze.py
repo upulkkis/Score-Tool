@@ -24,7 +24,6 @@ import json
 import pickle
 from help import get_help
 
-
 def help(topic):
     return html.Div(html.Details([html.Summary('?', className= 'button'), html.Div(get_help.help(topic))]))
 #Encoder that conferts numpy arrays to list for json dumps
@@ -51,6 +50,8 @@ else:
 #I think either one works, here are both :)
 app.config['suppress_callback_exceptions'] = True
 app.config.suppress_callback_exceptions = True
+
+
 
 ##################
 # Find all indexes of item in a list:

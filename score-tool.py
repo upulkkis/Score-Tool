@@ -1,4 +1,4 @@
-Production = True
+Production = False
 
 from bin import app
 

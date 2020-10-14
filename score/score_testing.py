@@ -26,8 +26,18 @@ import music21.converter
 import music21.midi.translate
 from chord import chord_testing, add_chord_element_list, maskingCurve_peakInput
 import heapq
+from flask_caching import Cache
 
 def score(app, orchestra):
+
+    #initialize caching
+    cache = Cache(app.server, config={
+        'CACHE_TYPE': 'redis',
+        'CACHE_TYPE': 'filesystem',
+        'CACHE_DIR': 'cache-directory',
+        'CACHE_THRESHOLD': 200
+    })
+
     dummy_fft_size = 22048  # original: 22048
     dropd_color = 'black'
     dropd_back = 'gray'
@@ -107,7 +117,10 @@ def score(app, orchestra):
 
         from helpers import assign_midi_name
         for i in range(length):
-            if midi_data.instruments[i].program != 0:
+
+            ### This was an initial check that the miditrack is not empty. Will fail if all tracks are set to instrument 1.
+
+            if midi_data.instruments[i].program != -1: #Changed from 0 to -1 to get all the staves
                 instrument = midi_data.instruments[i]
                 valid_instruments.append(i)
                 score_name = instrument.name
@@ -307,15 +320,18 @@ def score(app, orchestra):
         return dcc.Graph(figure = {'data':[go.Surface(z=orch3d, opacity=1, colorscale= 'Greys', showscale=False),
                                            go.Surface(z=tar3d, opacity=1, colorscale= 'Greens', showscale=False)], 'layout': layout}, config=fig_config)
 
-
+    @cache.memoize()
+    def fetch_midi_piano_scroll(midi_data):
+        return midi_data.get_piano_roll(pianoroll_resolution)
 
     def do_graph(midi_data, instrument, tech, dyn, tgt, onoff, score_range, bar_offset):
         all_traces = []
         target_pianoroll = []
         orchestration_pianoroll = []
-        all_data = midi_data.get_piano_roll(pianoroll_resolution) # Do not set range yet! [:, score_range[0]:score_range[1]]   #Do an overall pianoroll score
+        all_data =  fetch_midi_piano_scroll(midi_data)# Do not set range yet! [:, score_range[0]:score_range[1]]   #Do an overall pianoroll score
         score_length = len(all_data[0,:])
         all_data = all_data[:, score_range[0]:score_range[1]]
+
         alltrace = add_trace(all_data, 'orchestration')
         all_traces.append(alltrace.copy())
 
@@ -397,6 +413,11 @@ def score(app, orchestra):
                 orch_inst_per_instr_array['highlights'][j].append([])
                 bars.append([])
                 dynamics.append([])
+
+                @cache.memoize()
+                def get_notenumbers(roll_column):
+                    return np.nonzero(roll_column) #check from array which notes are played, i.e. the index of the column
+
                 bar = []
                 if i<len(ticks_for_bar_start)-1:
                     bar = orchestration_pianoroll[j][0][:,ticks_for_bar_start[i]:ticks_for_bar_start[i+1]]
@@ -406,7 +427,7 @@ def score(app, orchestra):
                 for k in range(len(bar[0, :])):
 
                     orch_inst_per_instr_array['highlights'][j][i].append('')
-                    notenumber = np.nonzero(bar[:, k]) #check from array which notes are played, i.e. the index of the column
+                    notenumber = get_notenumbers(bar[:, k])
                     dynamic = bar[notenumber, k] #Get the values of the index, which is the dynamics
 
                     #Tolist converts numpy type to native python
