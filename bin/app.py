@@ -278,18 +278,38 @@ import time
 			  Output('javascript', 'run')],
 			  [Input('navbar', 'loading_state')])
 def open_first(is_loading):
-	time.sleep(3)
+	time.sleep(1)
 	#visdcc.Run_js(run='''document.getElementById('nav-item').click()''')
 	js = '''
 	var doc = document.querySelectorAll("a[data-widget='pushmenu']")[0].click(); 
 	'''
 	return [False, js]
 
+'''
 @app.callback(Output('tip_toast', 'is_open'),
 			  [Input('navbar', 'loading_state')])
 def open_tip(is_loading):
-	#time.sleep(10)
+	time.sleep(5)
+	if 'user_id' in flask.request.cookies:
+		print("view cookie")
+		print(flask.request.cookies['user_id'])
+	else:
+		print("No cookie")
+	# dash.callback_context.triggered. response. set_cookie('dash cookie', ' - cookie')
 	return False
+'''
+
+@app.callback(
+	Output('user_uuid', 'children'),
+	[Input('navbar', 'loading_state')]
+	)
+def set_cookie(loading_state):
+	if 'user_id' in flask.request.cookies:
+		uuid = flask.request.cookies['user_id']
+	else:
+		uuid = create_uuid()
+		dash.callback_context.response.set_cookie('user_id', uuid)
+	return uuid
 
 
 
