@@ -12,3 +12,5 @@ pretty_midi==0.2.9
 librosa==0.7.2
 visdcc==0.0.40
 music21==5.1.0
+flask_caching==1.9.0
+redis==3.5.3

@@ -32,7 +32,12 @@ else:
 	app = dash.Dash(__name__)
 	server = app.server
 
-CACHE_CONFIG={'CACHE_TYPE':'redis', 'CACHE_REDIS_URL': 'redis://localhost:6379'}
+CACHE_CONFIG={'CACHE_TYPE':'redis',
+#'CACHE_KEY_PREFIX':'server1',
+'CACHE_REDIS_HOST':'localhost',
+'CACHE_REDIS_PORT':'6379',
+'CACHE_REDIS_URL': 'redis://localhost:6379',
+'CACHE_THRESHOLD': 2000}
 
 
 cache=Cache()
@@ -173,7 +178,7 @@ dissertation_page = dbc.Fade(children=[html.Br(),
 
 from score import score_testing
 
-score_page=dbc.Fade(score_testing.score(app, orchestra), id='score_main', is_in=False, )
+score_page=dbc.Fade(score_testing.score(app, orchestra, cache), id='score_main', is_in=False, )
 
 import compare.compare
 compare_page=dbc.Fade(compare.compare.compare(app, orchestra), id='compare_main', is_in=False,)
@@ -337,7 +342,7 @@ app.title = 'Orchestration_Analyzer'
 main_content=dac.Page([navbar, sidebar, controlbar, body])
 
 def serve_layout():
-	return html.Div([html.Div(create_uuid(), id="user_uuid", style={'display':'none'}), main_content], style={'backgroundColor':'#eed',})
+	return html.Div([html.Div(id="user_uuid", style={'display':'none'}), main_content], style={'backgroundColor':'#eed',})
 
 app.layout = serve_layout
 

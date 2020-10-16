@@ -28,15 +28,7 @@ from chord import chord_testing, add_chord_element_list, maskingCurve_peakInput
 import heapq
 from flask_caching import Cache
 
-def score(app, orchestra):
-
-    #initialize caching
-    cache = Cache(app.server, config={
-        'CACHE_TYPE': 'redis',
-        'CACHE_TYPE': 'filesystem',
-        'CACHE_DIR': 'cache-directory',
-        'CACHE_THRESHOLD': 200
-    })
+def score(app, orchestra, cache):
 
     dummy_fft_size = 22048  # original: 22048
     dropd_color = 'black'
@@ -51,7 +43,7 @@ def score(app, orchestra):
     dyn_list=['p', 'mf', 'f']
     note_numbers=np.arange(128)
     notenames=[]
-    roll = pretty_midi.PrettyMIDI('./examples/test_score.mid')
+    # roll = pretty_midi.PrettyMIDI('./examples/test_score.mid')
 
     for i in range(128):
         notenames.append(pretty_midi.note_number_to_name(i))
@@ -324,6 +316,69 @@ def score(app, orchestra):
     def fetch_midi_piano_scroll(midi_data):
         return midi_data.get_piano_roll(pianoroll_resolution)
 
+    @cache.memoize()
+    def cached_note_colors(notes, colors):
+        for entry in range(len(notes)):
+            # get note or chord of each entry
+            note = notes[entry]
+            # print('nuotti')
+            # print(notes)
+            # print('vari')
+            # print(colors)
+            if colors[entry]:
+                colors[entry] = [vel_to_color.color(x) for x in colors[entry]]
+            for ind in range(len(note)):
+                # convert all to note names and to lower casw
+                notes[entry][ind] = pretty_midi.note_number_to_name(notes[entry][ind]).lower()
+        return notes, colors
+
+
+    @cache.memoize()
+    def cached_masking_order_idx(orchestration_all_masking_curves, target_masking_curves_array):
+        for j in range(len(orchestration_all_masking_curves)):
+            if target_masking_curves_array:
+                # !! check 15 loudest peaks on target, subtract them from orchestration and check the heaviest masker:
+                tgt_peaks = heapq.nlargest(15, range(len(target_masking_curves_array)),
+                                           key=target_masking_curves_array.__getitem__)
+                orchestration_all_masking_curves[j] = np.subtract(orchestration_all_masking_curves[j][tgt_peaks],
+                                                                     np.array(target_masking_curves_array)[
+                                                                         tgt_peaks])
+                orchestration_all_masking_curves[j] = np.sum(orchestration_all_masking_curves[j])
+                # orchestration_all_masking_curves[i][j] = np.subtract(orchestration_all_masking_curves[i][j], np.array(target_masking_curves_array[i]))
+            else:
+                orchestration_all_masking_curves[j] = np.sum(orchestration_all_masking_curves[j][0:40])
+        masking_order_idx = heapq.nlargest(len(orchestration_all_masking_curves),
+                                           range(len(orchestration_all_masking_curves)),
+                                           key=orchestration_all_masking_curves.__getitem__)
+        return masking_order_idx
+
+    @cache.memoize()
+    def cached_masking_percent(target_peaks_array, orchestration_masking_curves):
+        idx_above = target_peaks_array[1] > np.interp(target_peaks_array[0], constants.threshold[:, 0],
+                                                         orchestration_masking_curves)
+        if np.count_nonzero(idx_above == True) == 0:
+            masking_percent = 100  # If all peaks are under masking threshold, percent is 100
+        else:
+            masking_percent = 100 - 100 * (np.count_nonzero(idx_above == True) / len(idx_above))
+
+        if not list(target_peaks_array[0]):  # If no peaks are found, percent is NaN
+            masking_percent = 0
+        return masking_percent
+
+    @cache.memoize()
+    def cached_orchestral_calculation(orch_mfcc_array, peaks_o, o_cents, S):
+        orch_mfcc_array = np.delete(orch_mfcc_array, 0, axis=0)  # Poistetaan nollat alusta häiritsemästä
+
+        cv = lambda x: np.std(x) / np.mean(x)
+        var = np.apply_along_axis(cv, axis=0, arr=orch_mfcc_array)
+        var_coeff = np.mean(abs(var))
+
+        orch_mfcc = np.mean(orch_mfcc_array, axis=0)
+        o_cents = np.mean(o_cents)
+        masking_threshold = maskingCurve_peakInput.maskingCurve(S, peaks_o)  # Calculate the masking curve
+
+        return masking_threshold, orch_mfcc, var_coeff, o_cents
+
     def do_graph(midi_data, instrument, tech, dyn, tgt, onoff, score_range, bar_offset):
         all_traces = []
         target_pianoroll = []
@@ -505,7 +560,7 @@ def score(app, orchestra):
                             try:
                                 peaks, mfcc, centroid, masking = feature_slice.get_feature_slice(inst, tch, dyna, note, orchestra, dummy_fft_size)
                                 orch_mfcc_array = np.vstack([orch_mfcc_array,mfcc])
-                                o_cents.append(centroid)
+
                                 peaks_o = combine_peaks.combine_peaks(peaks_o, [peaks[0], peaks[1]])
 
                                 #Get the added placeholder and add masking curves of found notes into it
@@ -515,13 +570,20 @@ def score(app, orchestra):
                                 chord_masking_array=np.maximum(chord_masking_array, masking)
                             except:
                                 print('Out of range notes found')
-
+                        try:
+                            o_cents.append(centroid)
+                        except:
+                            print('out of range notes')
                         momentary_masking_array.append(chord_masking_array)
                     else:
                         momentary_masking_array.append(np.zeros(107))
 
                 #Check if orchestral instruments found and do calculations
                 if list(peaks_o):
+
+                    masking_threshold, orch_mfcc, var_coeff, o_cents = cached_orchestral_calculation(orch_mfcc_array, peaks_o, o_cents, S)
+
+                    '''   Try cached                 
                     orch_mfcc_array = np.delete(orch_mfcc_array, 0, axis=0)  # Poistetaan nollat alusta häiritsemästä
 
                     cv = lambda x: np.std(x) / np.mean(x)
@@ -532,6 +594,8 @@ def score(app, orchestra):
                     orch_mfcc = np.mean(orch_mfcc_array, axis=0)
                     o_cents = np.mean(o_cents)
                     masking_threshold = maskingCurve_peakInput.maskingCurve(S, peaks_o)  # Calculate the masking curve
+                    '''
+
                     #print('momentary:')
                     #print(momentary_masking_array)
                     #Append all the values into the vectors
@@ -540,8 +604,8 @@ def score(app, orchestra):
                     orchestration_var_coeffs.append(var_coeff)
                     orchestration_centroids.append(o_cents)
                     orchestration_all_masking_curves.append(momentary_masking_array) #!!
-                    print('ork pituus:')
-                    print(len(momentary_masking_array))
+                    #print('ork pituus:')
+                    #print(len(momentary_masking_array))
                 else:
                     orchestration_masking_curves.append(np.zeros(107)-20)
                     orchestration_mfccs.append(np.zeros(12))
@@ -678,6 +742,11 @@ def score(app, orchestra):
 
                 # Check if target instruments found and do calculations
                 if list(peaks_t):
+
+                    masking_threshold, target_mfcc, var_coeff, t_cents = cached_orchestral_calculation(target_mfcc_array,
+                                                                                                     peaks_t, t_cents,
+                                                                                                     S)
+                    '''
                     target_mfcc_array = np.delete(target_mfcc_array, 0, axis=0)  # Poistetaan nollat alusta häiritsemästä
 
                     cv = lambda x: np.std(x) / np.mean(x)
@@ -687,6 +756,7 @@ def score(app, orchestra):
                     target_mfcc = np.mean(target_mfcc_array, axis=0)
                     t_cents = np.mean(t_cents)
                     masking_threshold = maskingCurve_peakInput.maskingCurve(S, peaks_t)  #!! Calculate the masking curve
+                    '''
 
                     # Append all the values into the vectors
                     target_peaks_array.append(peaks_t)
@@ -722,6 +792,10 @@ def score(app, orchestra):
         target_masking_percent_array = []
         ### Calculate target masking at all notes
         for i in range (len(target_peaks_array)):
+
+            masking_percent = cached_masking_percent(target_peaks_array[i], orchestration_masking_curves[i])
+
+            ''' try cached!
             idx_above = target_peaks_array[i][1] > np.interp(target_peaks_array[i][0], constants.threshold[:, 0], orchestration_masking_curves[i])
             if np.count_nonzero(idx_above == True) == 0:
                 masking_percent = 100 #If all peaks are under masking threshold, percent is 100
@@ -730,6 +804,7 @@ def score(app, orchestra):
 
             if not list(target_peaks_array[i][0]): #If no peaks are found, percent is NaN
                 masking_percent = 0
+            '''
 
             target_masking_percent_array.append(masking_percent)
         #!!
@@ -742,6 +817,12 @@ def score(app, orchestra):
         #Go through individual orchestration masking curves: #!!
         for i in range(len(orchestration_all_masking_curves)):
             #Go through curves in every note entry #!!
+            if target_masking_curves_array:
+                cached_tgt_array = target_masking_curves_array[i]
+            else:
+                cached_tgt_array = []
+            masking_order_idx = cached_masking_order_idx(orchestration_all_masking_curves[i], cached_tgt_array)
+            ''' Try cached!
             for j in range(len(orchestration_all_masking_curves[i])):
                 if target_masking_curves_array:
                     #!! check 15 loudest peaks on target, subtract them from orchestration and check the heaviest masker:
@@ -751,7 +832,9 @@ def score(app, orchestra):
                     #orchestration_all_masking_curves[i][j] = np.subtract(orchestration_all_masking_curves[i][j], np.array(target_masking_curves_array[i]))
                 else:
                     orchestration_all_masking_curves[i][j] = np.sum(orchestration_all_masking_curves[i][j][0:40])
+            
             masking_order_idx = heapq.nlargest(len(orchestration_all_masking_curves[i]), range(len(orchestration_all_masking_curves[i])), key=orchestration_all_masking_curves[i].__getitem__)
+            '''
             #!!print('indeksit')
             # print(masking_order_idx)
             # print(orch_inst_per_instr_array['highlights'][masking_order_idx[0]])
@@ -861,6 +944,9 @@ def score(app, orchestra):
                 name = orch_instruments[i]
                 clef = assign_clef.clef(name)
                 # get the note array of current instrument
+                notes, colors = cached_note_colors(orchestration_array[i][j], orch_dyn_array[i][j])
+
+                ''' Try cached!
                 notes = orchestration_array[i][j]
                 colors = orch_dyn_array[i][j]
                 for entry in range(len(notes)):
@@ -875,6 +961,8 @@ def score(app, orchestra):
                     for ind in range(len(note)):
                         # convert all to note names and to lower casw
                         notes[entry][ind] = pretty_midi.note_number_to_name(notes[entry][ind]).lower()
+                '''
+
                 # notes = [pretty_midi.note_number_to_name(i).lower() for i in notes]
                 #!! if  orchestration_masker_colors_array[j]:
                 #     #print(orchestration_masker_colors_array[j])
@@ -1270,8 +1358,9 @@ def score(app, orchestra):
         [Input({'type': 'a_graph', 'index': ALL}, 'clickData'),
          Input('pianoroll_graph', 'onClick'),
          ], #Input('3d_graph', 'clickData'),], #Click from 3d disturbs panning!!
-        [State('hidden_material', 'children')])
-    def check_orchestration(click, onclick, material):
+        [State('hidden_material', 'children'),
+         State('user_uuid', 'children')])
+    def check_orchestration(click, onclick, material, user_uuid):
         point=[]
         myClick = None
         #if click3d!=None:
@@ -1297,7 +1386,10 @@ def score(app, orchestra):
 
         if point:
             #print(type(material))
-            material = json.loads(material)
+            # material = json.loads(material)
+
+            material = json.loads(cache.get(user_uuid + 'material'))
+
             orchestration = []
             for i in range(len(material['orchestration']['notes'])):
                 notes = material['orchestration']['notes'][i][point]
@@ -1468,11 +1560,12 @@ def score(app, orchestra):
                       State('3d_graph', 'figure'),
                       State({'type': 'a_graph', 'index': ALL}, 'figure'),
                       State('hidden_material', 'children'),
+                      State('user_uuid', 'children')
                   ]
                   )
-    def prepare_download(c, pianoroll, graph3d, all_graphs, analyzed_material):
+    def prepare_download(c, pianoroll, graph3d, all_graphs, analyzed_material, user_uuid):
         if c>0:
-            all_data = {'pianoroll': pianoroll, '3d': graph3d, 'all': all_graphs, 'material': json.loads(analyzed_material)}
+            all_data = {'pianoroll': pianoroll, '3d': graph3d, 'all': all_graphs, 'material': json.loads(cache.get(user_uuid + 'material'))}
             all_data = json.dumps(all_data)
             script = '''
             function loadScript(url, callback)
@@ -1611,9 +1704,10 @@ def score(app, orchestra):
          State('midi_graph', 'figure'),
          State('score_range', 'value'),
          State('hidden_material', 'children'),
-         State('counter', 'children')
+         State('counter', 'children'),
+         State('user_uuid', 'children')
          ])
-    def button_output(value, reset, upload_score,hidden_score, instrument, tech, dyn, target, onoff, score_range, stave_list, bar_offset, figure_3d, figures_all, figure_midi, max_int, analyzed_material, counter):
+    def button_output(value, reset, upload_score,hidden_score, instrument, tech, dyn, target, onoff, score_range, stave_list, bar_offset, figure_3d, figures_all, figure_midi, max_int, analyzed_material, counter, user_uuid):
 
         #Get the right end of the slider
         value = counter + max_int[0]
@@ -1661,10 +1755,10 @@ def score(app, orchestra):
             return [None, score_pianoroll, figure_3d, figures_all, figure_midi, interval, calc_percent, calc_text, counter]
 
         #If material dict is empty, let's create one, else load old one
-        if not analyzed_material:
+        if not cache.get(user_uuid+'material'):
             analyzed_material=dict(target=dict(dict(notes=[], dyns=[], inst=[], tech=[])), orchestration=dict(dict(notes=[], dyns=[], inst=[], tech=[])))
         else:
-            analyzed_material=json.loads(analyzed_material)
+            analyzed_material=json.loads(cache.get(user_uuid+'material'))
 
         if input_id=='upload-score':
             #Decode uploaded file:
@@ -1678,7 +1772,7 @@ def score(app, orchestra):
             figure_3d = all_data['3d']
             figures_all = all_data['all']
             analyzed_material = all_data['material']
-            if not isinstance(analyzed_material, str):
+            if not isinstance(cache.set(user_uuid + 'material'), str):
                 analyzed_material = json.dumps(analyzed_material)
 
             figure_midi = ''
@@ -1698,14 +1792,17 @@ def score(app, orchestra):
                                               'width': ((score_length * 200) + 100) / scale,
                                               'height': (score_height * 70) / scale + 100})
 
-            return [analyzed_material, score_pianoroll, figure_3d, figures_all, figure_midi, interval, 0, '', 0]
+            cache.set(user_uuid+'material', analyzed_material)
+
+            return ['analyzed_material', score_pianoroll, figure_3d, figures_all, figure_midi, interval, 0, '', 0]
 
 
         if input_id=='int' and value>0 and value<max_int and max_int!=0:
             start_bar = score_range[0]-1
             score_range[0]-=1 #Adjust range to show right value
             score_range=[value-1, value+1]
-            hidden_score = json.loads(hidden_score)
+            # hidden_score = json.loads(hidden_score)
+            hidden_score = cache.get(user_uuid+'score')
             hidden_score = base64.b64decode(hidden_score)
             midi_data = pretty_midi.PrettyMIDI(io.BytesIO(hidden_score))
             #Get downbeats for range:
@@ -1812,10 +1909,13 @@ def score(app, orchestra):
 
             counter += 1
 
-            return [json.dumps(analyzed_material), score_pianoroll, figure_3d, figures_all, figure_midi, interval, calc_percent, calc_text, counter]
+            cache.set(user_uuid + 'material', json.dumps(analyzed_material))
+
+            return [json.dumps('analyzed_material'), score_pianoroll, figure_3d, figures_all, figure_midi, interval, calc_percent, calc_text, counter]
         else:
             raise PreventUpdate
-        return [json.dumps(analyzed_material), '', figure_3d, figures_all, figure_midi, 8000, 0, '0%', counter]
+        cache.set(user_uuid + 'material', json.dumps(analyzed_material))
+        return [json.dumps('analyzed_material'), '', figure_3d, figures_all, figure_midi, 8000, 0, '0%', counter]
 
     ###############################################
     ###### LOAD DATA FROM UPLOAD OR DROPDOWN ######
@@ -1839,8 +1939,9 @@ def score(app, orchestra):
         [Input('score_select', 'value'),
          Input('upload-data', 'contents')],
         [State('upload-data', 'filename'),
-                   State('upload-data', 'last_modified')])
-    def select_output(value, list_of_contents, list_of_names, list_of_dates):
+        State('upload-data', 'last_modified'),
+         State('user_uuid', 'children')])
+    def select_output(value, list_of_contents, list_of_names, list_of_dates, user_uuid):
         dump=''
         load_return=empty_content
         style = {'margin':10}
@@ -1863,8 +1964,9 @@ def score(app, orchestra):
             dump = tiedot[1]
             load_return = define_score_instruments(midifile, 'Own upload')
             style = {'margin': 10}
+        cache.set(user_uuid+'score', dump)
 
-        return [dump, load_return, style]
+        return ['', load_return, style]
 
 
     def parse_contents(contents):#, filename, date):
