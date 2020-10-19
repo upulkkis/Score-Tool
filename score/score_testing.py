@@ -30,6 +30,7 @@ from flask_caching import Cache
 
 def score(app, orchestra, cache):
 
+
     dummy_fft_size = 22048  # original: 22048
     dropd_color = 'black'
     dropd_back = 'gray'
@@ -481,7 +482,7 @@ def score(app, orchestra, cache):
                 #Go through notes in a bar:
                 for k in range(len(bar[0, :])):
 
-                    orch_inst_per_instr_array['highlights'][j][i].append('')
+                    orch_inst_per_instr_array['highlights'][j][i].append('black') # CAUTION! IF USING SHADOWS, PUT HERE '' INSTEAD OF BLACK!!!!
                     notenumber = get_notenumbers(bar[:, k])
                     dynamic = bar[notenumber, k] #Get the values of the index, which is the dynamics
 
@@ -815,26 +816,28 @@ def score(app, orchestra, cache):
         # print(len(orch_inst_per_instr_array['highlights']))
         # print(len(orch_inst_per_instr_array['highlights'][0][0]))
         #Go through individual orchestration masking curves: #!!
+
+
         for i in range(len(orchestration_all_masking_curves)):
             #Go through curves in every note entry #!!
             if target_masking_curves_array:
-                cached_tgt_array = target_masking_curves_array[i]
+                cached_tgt_array = list(target_masking_curves_array[i])
             else:
                 cached_tgt_array = []
             masking_order_idx = cached_masking_order_idx(orchestration_all_masking_curves[i], cached_tgt_array)
-            ''' Try cached!
-            for j in range(len(orchestration_all_masking_curves[i])):
-                if target_masking_curves_array:
-                    #!! check 15 loudest peaks on target, subtract them from orchestration and check the heaviest masker:
-                    tgt_peaks = heapq.nlargest(15, range(len(target_masking_curves_array[i])), key=target_masking_curves_array[i].__getitem__)
-                    orchestration_all_masking_curves[i][j] = np.subtract(orchestration_all_masking_curves[i][j][tgt_peaks], np.array(target_masking_curves_array[i])[tgt_peaks])
-                    orchestration_all_masking_curves[i][j] = np.sum(orchestration_all_masking_curves[i][j])
-                    #orchestration_all_masking_curves[i][j] = np.subtract(orchestration_all_masking_curves[i][j], np.array(target_masking_curves_array[i]))
-                else:
-                    orchestration_all_masking_curves[i][j] = np.sum(orchestration_all_masking_curves[i][j][0:40])
-            
-            masking_order_idx = heapq.nlargest(len(orchestration_all_masking_curves[i]), range(len(orchestration_all_masking_curves[i])), key=orchestration_all_masking_curves[i].__getitem__)
-            '''
+            # Try cached!
+            # for j in range(len(orchestration_all_masking_curves[i])):
+            #     if target_masking_curves_array:
+            #         #!! check 15 loudest peaks on target, subtract them from orchestration and check the heaviest masker:
+            #         tgt_peaks = heapq.nlargest(15, range(len(target_masking_curves_array[i])), key=target_masking_curves_array[i].__getitem__)
+            #         orchestration_all_masking_curves[i][j] = np.subtract(orchestration_all_masking_curves[i][j][tgt_peaks], np.array(target_masking_curves_array[i])[tgt_peaks])
+            #         orchestration_all_masking_curves[i][j] = np.sum(orchestration_all_masking_curves[i][j])
+            #         #orchestration_all_masking_curves[i][j] = np.subtract(orchestration_all_masking_curves[i][j], np.array(target_masking_curves_array[i]))
+            #     else:
+            #         orchestration_all_masking_curves[i][j] = np.sum(orchestration_all_masking_curves[i][j][0:40])
+            # 
+            # masking_order_idx = heapq.nlargest(len(orchestration_all_masking_curves[i]), range(len(orchestration_all_masking_curves[i])), key=orchestration_all_masking_curves[i].__getitem__)
+            # 
             #!!print('indeksit')
             # print(masking_order_idx)
             # print(orch_inst_per_instr_array['highlights'][masking_order_idx[0]])
@@ -847,6 +850,7 @@ def score(app, orchestra, cache):
                         orch_inst_per_instr_array['highlights'][masking_order_idx[2]][0][i] = 'yellow'
             #!!
         #print(orchestration_all_masking_curves)
+
 
         ##Divide masking percent array into bars and do color array:
         orchestration_masker_colors_array = [] #!!
@@ -973,7 +977,12 @@ def score(app, orchestra, cache):
                 # print(name)
                 # print(notes)
                 # print(orch_inst_per_instr_array['highlights'][i][j])
-                bar = {'name': name, 'clef': clef, 'notes': notes, 'colors': colors, 'highlights': orch_inst_per_instr_array['highlights'][i][j]} #!!, 'highlights': highlights
+
+				#Old version with highlight on every note:
+                #bar = {'name': name, 'clef': clef, 'notes': notes, 'colors': colors, 'highlights': orch_inst_per_instr_array['highlights'][i][j]} #!!, 'highlights': highlights
+
+                #New version with colors instead of the highlights:
+                bar = {'name': name, 'clef': clef, 'notes': notes, 'colors': [[col] for col in orch_inst_per_instr_array['highlights'][i][j]]} #orch_inst_per_instr_array['highlights'][i][j]} #, 'highlights': orch_inst_per_instr_array['highlights'][i][j]} #!!, 'highlights': highlights
                 bars.append(bar)
             stave_list.append(bars)
 
@@ -1385,14 +1394,16 @@ def score(app, orchestra, cache):
                 point = onclick['note_index']
 
         if point:
-            #print(type(material))
+            material = json.loads(cache.get(user_uuid + 'material'))
             # material = json.loads(material)
 
-            material = json.loads(cache.get(user_uuid + 'material'))
-
+            #print(material) #material = json.loads(cache.get(user_uuid + 'material'))
+            #print(point)
             orchestration = []
             for i in range(len(material['orchestration']['notes'])):
                 notes = material['orchestration']['notes'][i][point]
+                #print(notes)
+
                 if list(notes):
                     for note in notes:
                         dyny = assign_dyns.dyns(int(material['orchestration']['dyns'][i][point][0]))
@@ -1418,6 +1429,7 @@ def score(app, orchestra, cache):
                         current_entry['target'] = True
                         current_entry['onoff'] = True
                         orchestration.append(current_entry)
+            #print(orchestration)
 
             point_instrumentation = add_chord_element_list.add(orchestra, orchestration, 'score')
             orch_dropdown = [dbc.Badge("", id='add_badge{}'.format('score'), color="success",
@@ -1430,7 +1442,7 @@ def score(app, orchestra, cache):
             return True, orch_dropdown
 
         if point:
-            material = json.loads(material)
+            material = json.loads(cache.get(user_uuid + 'material'))
             # Convert notes to note names and set to lower case for React
             notes =[]
             annotations = []
@@ -1752,6 +1764,7 @@ def score(app, orchestra, cache):
                          style={'backgroundColor': '#eed', 'color': 'black', 'fontSize': 30, 'textAlign': 'center'}),
                 score_pianoroll], style={'backgroundColor': '#eed', 'width': '100%', 'overflowX': 'auto'})
             counter=0
+            cache.delete(user_uuid+'material')
             return [None, score_pianoroll, figure_3d, figures_all, figure_midi, interval, calc_percent, calc_text, counter]
 
         #If material dict is empty, let's create one, else load old one
@@ -1800,7 +1813,7 @@ def score(app, orchestra, cache):
         if input_id=='int' and value>0 and value<max_int and max_int!=0:
             start_bar = score_range[0]-1
             score_range[0]-=1 #Adjust range to show right value
-            score_range=[value-1, value+1]
+            score_range=[value-1, value+1] #Should be value+1, changed to +5
             # hidden_score = json.loads(hidden_score)
             hidden_score = cache.get(user_uuid+'score')
             hidden_score = base64.b64decode(hidden_score)
@@ -1814,7 +1827,7 @@ def score(app, orchestra, cache):
             #closed = [False, False, False, False, False, False, False] #Close pianoroll in the start?
 
             #Get the graph data
-            graph_data = do_graph(midi_data, instrument, tech, dyn, target, onoff, s_range, score_range)
+            graph_data = do_graph(midi_data, instrument, tech, dyn, target, onoff, s_range, score_range) #Last attribute shold be score_range
             graph_data['bar_offset'][0] = start_bar
             #stave_list.append(graph_data['stave_list'])
             figure_3d['data'][0]['z']= figure_3d['data'][0]['z']+graph_data['orchestration_masking_curves']
@@ -1897,7 +1910,9 @@ def score(app, orchestra, cache):
                                               'height': (len(graph_data['instrument']) * 70 / scale) + 100})
 
             #Send an interval to allow graphs to update before next calculation
-            interval = dcc.Interval(id='int', interval=2000, max_intervals=2, n_intervals=1)
+
+            ## CAUTION!!! IF ThE PROGRAM DOESN'T UPDATE FAST ENOUGH, USE INTERVAL 1500 OR LARGER
+            interval = dcc.Interval(id='int', interval=200, max_intervals=2, n_intervals=1)
 
             v= value-graph_data['bar_offset'][0]+1
             m = max_int-graph_data['bar_offset'][0]
@@ -1965,6 +1980,7 @@ def score(app, orchestra, cache):
             load_return = define_score_instruments(midifile, 'Own upload')
             style = {'margin': 10}
         cache.set(user_uuid+'score', dump)
+        cache.delete(user_uuid+'material')
 
         return ['', load_return, style]
 

@@ -32,13 +32,16 @@ else:
 	app = dash.Dash(__name__)
 	server = app.server
 
-CACHE_CONFIG={'CACHE_TYPE':'redis',
-#'CACHE_KEY_PREFIX':'server1',
+#Cache for storing score and analysis files:
+
+CACHE_CONFIG={
+'CACHE_TYPE':'redis',
+'CACHE_KEY_PREFIX':'score',
 'CACHE_REDIS_HOST':'localhost',
 'CACHE_REDIS_PORT':'6379',
 'CACHE_REDIS_URL': 'redis://localhost:6379',
-'CACHE_THRESHOLD': 2000}
-
+'CACHE_DEFAULT_TIMEOUT': 0,
+'CACHE_THRESHOLD': 100000}
 
 cache=Cache()
 cache.init_app(server,config=CACHE_CONFIG)
@@ -329,7 +332,7 @@ body = dac.Body([
 				 tip_toast,
 visdcc.Run_js(id='javascript')
 				 ], style={
-'backgroundImage': '''url("./assets/orch_anal_logo.svg")''',  # old '''url("./assets/score.jpg")'''
+'backgroundImage': '''url("./assets/orch_anal_logo.png")''',  # old '''url("./assets/score.jpg")'''
 'backgroundRepeat': 'no-repeat',
 'backgroundPosition': 'center top',
 'backgroundSize': 'cover',
