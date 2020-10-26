@@ -1,7 +1,8 @@
 import numpy as np
 
 def sort_notes(notes, annotations, tgts, highlights=[]):
-
+    # print('sortattavat:')
+    # print(notes)
     if annotations:
         for i in range (len(notes)):
             notes[i]=[notes[i]]

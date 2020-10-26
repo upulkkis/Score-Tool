@@ -96,11 +96,12 @@ def score(app, orchestra, cache):
         length=len(midi_data.instruments)
         graphs =  [html.Tr([
                   html.Th('Score name'),
+                    html.Th('match'),
                   html.Th('Database name'),
                   html.Th('technique'),
                   html.Th('dynamic'),
                   html.Th('target/orch.'),
-                  html.Th('on/off')
+                  html.Th('off / on', style={'textAlign':'center'})
                           ])]
         def set_id(set_type, index):
             return {
@@ -118,12 +119,18 @@ def score(app, orchestra, cache):
                 valid_instruments.append(i)
                 score_name = instrument.name
                 #Try to guess the instrument according to midi program or the name
-                inst_name = assign_midi_name.set_name(instrument.program, instrument.name)
+                inst_name, certainty = assign_midi_name.set_name(instrument.program, instrument.name, list(orchestra.keys()))
                 #inst_lista.append(inst_name)
                 tch = 'normal'
                 #tech_lista.append(tch)
                 dynamics_list = ['from score', 'p', 'mf', 'f']
                 onoff = 1
+                match = 'found'
+                match_col = 'lightgreen'
+                if certainty <55:
+                    match = 'not found'
+                    match_col = 'salmon'
+                    onoff = 0
                 #onoff_lista.append(onoff)
                 target = 0
                 #target_lista.append(target)
@@ -133,6 +140,7 @@ def score(app, orchestra, cache):
                                      style={'display': 'inline-block', 'width': '100%'}
                              #style={'display': 'inline-block', 'padding': '8px', 'fontSize': '25px', 'color': 'grey', 'textAlign':'left'}),
                                      )),
+                    html.Th(match, style = {'width':'50px', 'backgroundColor': match_col}),
                     html.Th(dcc.Dropdown(
                         options=[{'label': val, 'value': val} for val in inst_list],
                         # className='select',
@@ -174,16 +182,22 @@ def score(app, orchestra, cache):
                         #style={'backgroundColor': dropd_back, 'color': dropd_color, 'display': 'inline-block', 'opacity': 1,
                         #       'border': 'none', 'width': '200px', 'fontSize': '25px', 'bottom': '-10px'},
                     )),
-                    html.Th(dcc.Dropdown(
-                        options=[{'label': 'on', 'value': 1}, {'label': 'off', 'value': 0}],
-                        className='select',
-                        value=onoff,
-                        multi=False,
-                        id=set_id('onoff_sc',i),
-                        style={'display': 'inline-block', 'width':'100%'}
-                        #style={'backgroundColor': dropd_back, 'color': dropd_color, 'display': 'inline-block', 'opacity': 1,
-                        #       'border': 'none', 'width': '100px', 'fontSize': '25px', 'bottom': '-10px'},
-                    )),
+                    # html.Th(dcc.Dropdown(
+                    #     options=[{'label': 'on', 'value': 1}, {'label': 'off', 'value': 0}],
+                    #     className='select',
+                    #     value=onoff,
+                    #     multi=False,
+                    #     id=set_id('onoff_sc',i),
+                    #     style={'display': 'inline-block', 'width':'100%'}
+                    #     #style={'backgroundColor': dropd_back, 'color': dropd_color, 'display': 'inline-block', 'opacity': 1,
+                    #     #       'border': 'none', 'width': '100px', 'fontSize': '25px', 'bottom': '-10px'},
+                    # ), style={'backgroundColor':match_col}),
+                    html.Th(daq.BooleanSwitch(
+                        color='lightgreen',
+                        className='score_onoff',
+                        on=onoff,
+                        id=set_id('onoff_sc', i),
+                        )),
                     #html.Th(html.Div(id="graph_{}".format(i))),
                 ]))
         graphs=html.Table(graphs, style={'width': '100%'})
@@ -1688,38 +1702,89 @@ def score(app, orchestra, cache):
 
         return ""
 
+    # @app.callback(
+    #     [Output('hidden3_score', 'children'),
+    #     ],
+    # [
+    #     Input('midi_graph', 'id')],
+    # [
+    #     State('pianoroll_graph', 'stave_list'),
+    #     State('3d_graph', 'figure'),
+    #     State({'type': 'a_graph', 'index': ALL}, 'figure'),
+    #     State('midi_graph', 'figure'),
+    #     State('user_uuid', 'children')
+    #     ])
+    # def initial_cache_set(bulk, score_pianoroll, figure_3d, figures_all, figure_midi, user_uuid):
+    #     score_figure_data = dict()
+    #     score_figure_data['figure_3d'] = figure_3d
+    #     score_figure_data['figures_all'] = figures_all
+    #     score_figure_data['figure_midi'] = figure_midi
+    #     score_figure_data['score_pianoroll'] = score_pianoroll
+    #     cache.set(user_uuid + 'score_figure_data', score_figure_data)
+    #     return ['']
+
+    # @app.callback(
+    #     [
+    #     Output('hidden_material', 'children'),
+    #     #Output('waiting_to_hide', 'children'),
+    #     Output('pianoroll_container', 'children'),
+    #     Output('3d_graph', 'figure'),
+    #     Output({'type': 'a_graph', 'index': ALL}, 'figure'),
+    #     Output('midi_graph', 'figure'),
+    #     Output('int_container', 'children'),
+    #     Output('calc_time', 'value'),
+    #     Output('calc_time', 'children'),
+    #     Output('counter', 'children'),
+    #      ],
+    #     [Input('int', 'n_intervals'),Input('confirm', 'submit_n_clicks'), Input('upload-score', 'contents')],
+    #     [State('hidden_score', 'children'),
+    #      State({'type': 'instrument_sc', 'index': ALL}, 'value'),
+    #     State({'type': 'tech_sc', 'index': ALL}, 'value'),
+    #     State({'type': 'dyn_sc', 'index': ALL}, 'value'),
+    #     State({'type': 'target_sc', 'index': ALL}, 'value'),
+    #     State({'type': 'onoff_sc', 'index': ALL}, 'value'),
+    #      State('score_range', 'value'),
+    #      State('pianoroll_graph', 'stave_list'),
+    #      State('pianoroll_graph', 'bar_offset'),
+    #      State('3d_graph', 'figure'),
+    #      State({'type': 'a_graph', 'index': ALL}, 'figure'),
+    #      State('midi_graph', 'figure'),
+    #      State('score_range', 'value'),
+    #      State('hidden_material', 'children'),
+    #      State('counter', 'children'),
+    #      State('user_uuid', 'children')
+    #      ])
+    # def button_output(value, reset, upload_score,hidden_score, instrument, tech, dyn, target, onoff, score_range, stave_list, bar_offset, figure_3d, figures_all, figure_midi, max_int, analyzed_material, counter, user_uuid):
+
     @app.callback(
         [
-        Output('hidden_material', 'children'),
-        #Output('waiting_to_hide', 'children'),
-        Output('pianoroll_container', 'children'),
-        Output('3d_graph', 'figure'),
-        Output({'type': 'a_graph', 'index': ALL}, 'figure'),
-        Output('midi_graph', 'figure'),
-        Output('int_container', 'children'),
-        Output('calc_time', 'value'),
-        Output('calc_time', 'children'),
-        Output('counter', 'children'),
-         ],
-        [Input('int', 'n_intervals'),Input('confirm', 'submit_n_clicks'), Input('upload-score', 'contents')],
+            Output('hidden_material', 'children'),
+            # Output('waiting_to_hide', 'children'),
+            Output('pianoroll_container', 'children'),
+            Output('3d_graph', 'figure'),
+            Output({'type': 'a_graph', 'index': ALL}, 'figure'),
+            Output('midi_graph', 'figure'),
+            Output('int_container', 'children'),
+            Output('calc_time', 'value'),
+            Output('calc_time', 'children'),
+            Output('counter', 'children'),
+            ],
+        [Input('int', 'n_intervals'), Input('confirm', 'submit_n_clicks'), Input('upload-score', 'contents')],
         [State('hidden_score', 'children'),
          State({'type': 'instrument_sc', 'index': ALL}, 'value'),
-        State({'type': 'tech_sc', 'index': ALL}, 'value'),
-        State({'type': 'dyn_sc', 'index': ALL}, 'value'),
-        State({'type': 'target_sc', 'index': ALL}, 'value'),
-        State({'type': 'onoff_sc', 'index': ALL}, 'value'),
+         State({'type': 'tech_sc', 'index': ALL}, 'value'),
+         State({'type': 'dyn_sc', 'index': ALL}, 'value'),
+         State({'type': 'target_sc', 'index': ALL}, 'value'),
+         State({'type': 'onoff_sc', 'index': ALL}, 'on'), #Value is not 'value', but 'on' foor boolean switch
          State('score_range', 'value'),
-         State('pianoroll_graph', 'stave_list'),
-         State('pianoroll_graph', 'bar_offset'),
-         State('3d_graph', 'figure'),
-         State({'type': 'a_graph', 'index': ALL}, 'figure'),
-         State('midi_graph', 'figure'),
          State('score_range', 'value'),
          State('hidden_material', 'children'),
          State('counter', 'children'),
          State('user_uuid', 'children')
          ])
-    def button_output(value, reset, upload_score,hidden_score, instrument, tech, dyn, target, onoff, score_range, stave_list, bar_offset, figure_3d, figures_all, figure_midi, max_int, analyzed_material, counter, user_uuid):
+    def button_output(value, reset, upload_score, hidden_score, instrument, tech, dyn, target, onoff, score_range,
+                      max_int, analyzed_material,
+                      counter, user_uuid):
 
         #Get the right end of the slider
         value = counter + max_int[0]
@@ -1732,6 +1797,13 @@ def score(app, orchestra, cache):
         else:
             input_id = ctx.triggered[0]['prop_id'].split('.')[0]
         #print('value: {}, counter: {}'.format(value, counter))
+
+        #Get figure data from cache
+        score_figure_data = cache.get(user_uuid + 'score_figure_data')
+        figure_3d = score_figure_data['figure_3d']
+        figures_all = score_figure_data['figures_all']
+        figure_midi = score_figure_data['figure_midi']
+        stave_list = score_figure_data['stave_list']
 
         #Set the bar under calculation, counter+start bar
 
@@ -1765,6 +1837,14 @@ def score(app, orchestra, cache):
                 score_pianoroll], style={'backgroundColor': '#eed', 'width': '100%', 'overflowX': 'auto'})
             counter=0
             cache.delete(user_uuid+'material')
+
+            score_figure_data = dict()
+            score_figure_data['figure_3d'] = figure_3d
+            score_figure_data['figures_all'] = figures_all
+            score_figure_data['figure_midi'] = figure_midi
+            score_figure_data['stave_list'] = graph_data['stave_list']
+
+            cache.set(user_uuid + 'score_figure_data', score_figure_data)
             return [None, score_pianoroll, figure_3d, figures_all, figure_midi, interval, calc_percent, calc_text, counter]
 
         #If material dict is empty, let's create one, else load old one
@@ -1925,6 +2005,14 @@ def score(app, orchestra, cache):
             counter += 1
 
             cache.set(user_uuid + 'material', json.dumps(analyzed_material))
+
+            score_figure_data = dict()
+            score_figure_data['figure_3d'] = figure_3d
+            score_figure_data['figures_all'] = figures_all
+            score_figure_data['figure_midi'] = figure_midi
+            score_figure_data['stave_list'] = stave_list
+
+            cache.set(user_uuid + 'score_figure_data', score_figure_data)
 
             return [json.dumps('analyzed_material'), score_pianoroll, figure_3d, figures_all, figure_midi, interval, calc_percent, calc_text, counter]
         else:

@@ -10,4 +10,6 @@ CACHE_CONFIG={'CACHE_TYPE':'redis',
 'CACHE_REDIS_URL': 'redis://localhost:6379'}
 cache.init_app(server,config=CACHE_CONFIG)
 cache.set('test', uuid.uuid4())
+print(cache.get('tes'))
 print(cache.get('test'))
+

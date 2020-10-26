@@ -35,6 +35,10 @@ resize: both;
 overflow: auto;
 }
 */
+.score_onoff div div .cmSQpo {
+background-color: salmon !important;
+}
+
 .vf-stavenote .vf-modifiers text:hover{
 cursor: pointer;
 font-size: 15px;

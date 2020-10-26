@@ -75,7 +75,8 @@ def chord_testing(app, orchestra, custom_id='', initial_data=''):
             html.A('',id='json-download{}'.format(custom_id), download="data.orchestration",href="",target="_blank",style={'width': '100%'}
                 ),
                     ]),
-                visdcc.Run_js(id='javascript_chrd{}'.format(custom_id))
+            dbc.Col(dbc.Button('clear all', id='clear_all{}'.format(custom_id), n_clicks=0, size='sm', style={'padding':'8px','width': '100%'})),
+                visdcc.Run_js(id='javascript_chrd{}'.format(custom_id)),
             ], justify='between', style={'margin':'1px'}, no_gutters=True),
             dbc.Row([
         #dbc.Button(id='add_instrument_button{}'.format(custom_id), n_clicks=0, children=['Click to add current selection to orchestration', dbc.Badge("", id='add_badges{}'.format(custom_id), color="success", style={'top':-10, 'right':-5})],),
@@ -179,6 +180,7 @@ def chord_testing(app, orchestra, custom_id='', initial_data=''):
     )
     def list_update(inst, tech, dyn, note, tgt, onoff, orch, outer_style):
 
+        note = [int(n) for n in note]
         instrumentation=dict()
         instrumentation['inst']=inst
         instrumentation['tech']=tech
@@ -355,7 +357,9 @@ def chord_testing(app, orchestra, custom_id='', initial_data=''):
         [Input('add_instrument_button{}'.format(custom_id), 'n_clicks'),
          Input('submit{}'.format(custom_id), 'n_clicks'),
          Input('chord_selector{}'.format(custom_id), 'value'),
-         Input('upload_chord{}'.format(custom_id), 'contents')],
+         Input('upload_chord{}'.format(custom_id), 'contents'),
+        Input({'type': 'delete{}'.format(custom_id), 'index': ALL}, 'n_clicks'),
+         Input('clear_all{}'.format(custom_id), 'n_clicks')],
         [State('orchestration_dropdown{}'.format(custom_id), 'children'),
          State('instrument-input{}'.format(custom_id),'value'),
     State('techs-input{}'.format(custom_id),'value'),
@@ -364,7 +368,7 @@ def chord_testing(app, orchestra, custom_id='', initial_data=''):
     State('target-input{}'.format(custom_id),'on'),
     State('instrumentation_container{}'.format(custom_id), 'children'),
          ])
-    def display_dropdowns(n_clicks, remove, chord_selector, upload, children, instrument, techs, dynamics, notes, tgt, instrumentation):
+    def display_dropdowns(n_clicks, remove, chord_selector, upload, delete, clear_all, children, instrument, techs, dynamics, notes, tgt, instrumentation):
         ctx = dash.callback_context  # Callback context to recognize which input has been triggered
         if not ctx.triggered:
             raise PreventUpdate
@@ -375,6 +379,21 @@ def chord_testing(app, orchestra, custom_id='', initial_data=''):
             instrumentation = []
         else:
             instrumentation = json.loads(instrumentation)
+
+        #Delete the right index
+        try: #Must use try, because json load will fail on plain ascii
+            input_id=json.loads(input_id)
+            if input_id['type'] == 'delete{}'.format(custom_id):
+                for child in range(len(children)):
+                    if children[child]['props']['id']['index'] == input_id['index']:
+                        index_to_pop = child
+                        children.pop(index_to_pop)
+                        instrumentation.pop(index_to_pop)
+        except:
+            pass
+
+        if input_id == 'clear_all{}'.format(custom_id):
+            children=[]
 
         #If user loads pre-defined chords, do the selection
         if input_id == 'chord_selector{}'.format(custom_id):
@@ -502,6 +521,12 @@ def chord_testing(app, orchestra, custom_id='', initial_data=''):
                                                           vertical=True,
                                                           id=set_id('onoff{}'.format(custom_id)),
                                                           style={'display': 'inline-block', 'textShadow':'2px 2px 2px black'}
+                                                      ),
+                                                  dbc.Button(
+                                                      "DELETE", id=set_id("delete{}".format(custom_id)),
+                                                      size='sm', color="danger",
+                                                      style={'border': 'none', 'display': 'inline-block',
+                                                             'width': '100px', 'backgroundColor':'red'}
                                                       ),
                                                   html.Hr(style={'borderTop': '1px solid #bbb'}),
                                                       ], id=set_id('orch_outer{}'.format(custom_id)), style={'backgroundColor':'primary'}))

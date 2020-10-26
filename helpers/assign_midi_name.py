@@ -1,7 +1,32 @@
-def set_name(number, name):
+from fuzzywuzzy import process
+
+def value_to_color(value):
+    return 'rgb({}, 0, 0)'.format(value)
+
+def set_name(number, name, instruments):
     inst_name = 'violin'
-    if name.find('solo')>0:
+    name=name.lower()
+
+    certainty = 90
+
+    if name.find('fagot')>=0:
+        inst_name = 'bassoon'
+    elif name.find('contrabass')>=0:
+        inst_name = 'double_bass'
+    elif name.find('vcl')>=0:
+        inst_name = 'cello'
+    elif name.find('basso')>=0:
+        inst_name = 'double_bass'
+    elif name.find('cymbal')>=0:
+        inst_name = 'piatti'
+    elif name.find('choir')>=0:
+        inst_name = 'soprano_generic'
+    elif name.find('violinsolo')>=0:
         inst_name = 'solo_violin'
+    elif name.find('viol1')>=0:
+        inst_name = 'violin'
+    elif name.find('viol2')>=0:
+        inst_name = 'violin'
     elif number == 41 - 1:
         inst_name = 'violin'
     elif number == 42 - 1:
@@ -38,20 +63,10 @@ def set_name(number, name):
         inst_name = 'soprano_generic'
     elif number == 54 - 1:
         inst_name = 'soprano_generic'
+    else:
+        inst_name, certainty = process.extractOne(name, instruments)
 
-    if name.find('viola')>=0:
-        inst_name = 'viola'
-    elif name.find('cello')>=0:
-        inst_name = 'cello'
-    elif name.find('contrabassoon')>=0:
-        inst_name = 'contrabassoon'
-    elif name.find('fagot')>=0:
-        inst_name = 'bassoon'
-    elif name.find('contrabass')>=0:
-        inst_name = 'double_bass'
-    elif name.find('double')>=0:
-        inst_name = 'double_bass'
-    elif name.find('basso')>=0:
-        inst_name = 'double_bass'
+    if inst_name.find('bass_trombone')>=0:
+        inst_name = 'tenor_trombone'
 
-    return inst_name
+    return inst_name, certainty

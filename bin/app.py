@@ -9,7 +9,7 @@ if Production:
 	import flask
 
 import dash
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State, ALL
 import dash_bootstrap_components as dbc
 import dash_html_components as html
 import dash_admin_components as dac
@@ -309,14 +309,24 @@ def open_tip(is_loading):
 
 @app.callback(
 	Output('user_uuid', 'children'),
-	[Input('navbar', 'loading_state')]
+	[Input('navbar', 'loading_state')],
+	[State('pianoroll_graph', 'stave_list'),
+	State('3d_graph', 'figure'),
+	State({'type': 'a_graph', 'index': ALL}, 'figure'),
+	State('midi_graph', 'figure'),]
 	)
-def set_cookie(loading_state):
+def set_cookie(loading_state, stave_list, figure_3d, figures_all, figure_midi):
 	if 'user_id' in flask.request.cookies:
 		uuid = flask.request.cookies['user_id']
 	else:
 		uuid = create_uuid()
 		dash.callback_context.response.set_cookie('user_id', uuid)
+	score_figure_data = dict()
+	score_figure_data['figure_3d'] = figure_3d
+	score_figure_data['figures_all'] = figures_all
+	score_figure_data['figure_midi'] = figure_midi
+	score_figure_data['stave_list'] = stave_list
+	cache.set(uuid + 'score_figure_data', score_figure_data)
 	return uuid
 
 
