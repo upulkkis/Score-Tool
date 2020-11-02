@@ -869,7 +869,9 @@ def score(app, orchestra, cache):
         ##Divide masking percent array into bars and do color array:
         orchestration_masker_colors_array = [] #!!
         target_masking_percent_array_with_bars = []
-        bar = []
+        target_color_array_with_bars = []
+        bar_m = []  #init own bar arrays for colors and highlights
+        bar_c = []  #
         bar_orch_color=[]
         bar_number=0
         j=0;
@@ -877,8 +879,14 @@ def score(app, orchestra, cache):
 
             #Look how many percent target is masked and assign color according to that
             hearing_value = target_masking_percent_array[i]
-            masking_color = masking_warning_color.color(hearing_value)
-            bar.append(masking_color)
+            if hearing_value<50:    #If masking percent is under 50%, color note to green, awith no highlight
+                masking_color = masking_warning_color.color(hearing_value)
+                bar_m.append('')
+                bar_c.append(masking_color)
+            else:   #If masking percent is over 50%, color note to black, and do highlighting
+                masking_color = masking_warning_color.color(hearing_value)
+                bar_m.append(masking_color)
+                bar_c.append('')
 
             list_of_instruments = []
             instrument_colors = []
@@ -935,17 +943,21 @@ def score(app, orchestra, cache):
 
             j += 1
             if i+1 in ticks_for_bar_start:
-                target_masking_percent_array_with_bars.append(bar)
+                target_masking_percent_array_with_bars.append(bar_m)
+                target_color_array_with_bars.append(bar_c)
                 #!!orchestration_masker_colors_array.append(bar_orch_color)
                 bar_number += 1
                 j=0
-                bar=[]
+                bar_m=[]
+                bar_c=[]
                 bar_orch_color=[]
 
         #Add two empty bars in the end to avoid errors (bad programming, I know)
-        target_masking_percent_array_with_bars.append(bar)
+        target_masking_percent_array_with_bars.append(bar_m)
+        target_color_array_with_bars.append(bar_c)
         #!!orchestration_masker_colors_array.append(bar_orch_color)
-        target_masking_percent_array_with_bars.append(bar)
+        target_masking_percent_array_with_bars.append(bar_m)
+        target_color_array_with_bars.append(bar_c)
         #!!orchestration_masker_colors_array.append(bar_orch_color)
 
         ################
@@ -1019,7 +1031,11 @@ def score(app, orchestra, cache):
                         #convert all to note names and to lower case
                         notes[entry][ind]=pretty_midi.note_number_to_name(notes[entry][ind]).lower()
                 #notes = [pretty_midi.note_number_to_name(i).lower() for i in notes]
-                bar = {'name': name, 'clef': clef, 'notes': notes, 'colors': target_masking_percent_array_with_bars[j]} #Color masked notes red
+
+                # Old one with colored notes
+                # bar = {'name': name, 'clef': clef, 'notes': notes, 'colors': target_masking_percent_array_with_bars[j]} #Color masked notes red
+                # New one with highlights round notes
+                bar = {'name': name, 'clef': clef, 'notes': notes, 'colors':target_color_array_with_bars[j], 'highlights': target_masking_percent_array_with_bars[j]} #Color masked notes red
             stave_list[j].insert(0, bar)
 
         #Calculate target mfcc distance
