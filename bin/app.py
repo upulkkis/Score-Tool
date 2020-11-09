@@ -160,15 +160,21 @@ chord_page = dac.Page([html.Br(),
 ])
 
 from tutorial import masking_example
+from tutorial import hall
 
-interactive_page = dbc.Row([
-	dbc.Fade(children=[
+interactive_page = html.Div(dbc.Fade(children=[dbc.Row([
 		html.Br(),
-		dac.SimpleBox(title='Try it for yourself', children=['Move the slider to increase volume on middle sinewave and see one of the adjacent sounds get masked',
-															 masking_example.masking_example_slide(app)], width=12), #style={'width':'800px'}),
-			  ], id='masking_example', is_in=False,
-			 )
-], justify='center')
+		dac.SimpleBox(title='Try masking yourself', children=['Move the slider to increase volume on middle sinewave and see one of the adjacent sounds get masked',
+															 masking_example.masking_example_slide(app)], width=6), #style={'width':'800px'}),
+], justify='center'),
+dbc.Row([
+		html.Br(),
+	# 'Move the positions of yourself, instruments, or the whole orchestra to see the attenuation of instruments',
+		dac.SimpleBox(title='Try hall attenuation yourself', children=[
+															 hall.hall_test(app)], width=12,)# style={'height':'2000px'}),
+], justify='center'),
+], id='masking_example', is_in=False,
+			 ))
 
 import dissertation.dissertation_report
 dissertation_page = dbc.Fade(children=[html.Br(),

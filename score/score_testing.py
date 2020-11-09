@@ -1,3 +1,6 @@
+debug=True
+if debug:
+    from ttictoc import tic, toc
 import flask
 import dash
 import dash_core_components as dcc
@@ -404,7 +407,8 @@ def score(app, orchestra, cache):
 
         alltrace = add_trace(all_data, 'orchestration')
         all_traces.append(alltrace.copy())
-
+        if debug:
+            tic()
         target_instruments=[]
         target_techs=[]
         target_dyns=[]
@@ -446,7 +450,10 @@ def score(app, orchestra, cache):
         offset=tickvals[0]*pianoroll_resolution
         ticks_for_bar_start = [int(round(i*pianoroll_resolution-offset)) for i in tickvals] #Do the math to get the right place
 
-
+        if debug:
+            print('read score time:')
+            print(toc())
+            tic()
 
         #bars =[round(tick*pianoroll_resolution) for tick in tickvals]
         #Orchestration pianoroll first indexes are instrumentation, second 0 is pianoroll, second 1 is instrument name, then is
@@ -519,6 +526,12 @@ def score(app, orchestra, cache):
             orch_dyn_array.append(dynamics)
         #print(orch_inst_per_instr_array['notes'][0])
         #print(orch_inst_per_instr_array['inst'][0])
+
+        if debug:
+            print('do note array:')
+            print(toc())
+            tic()
+
         #######
         ## Do orchestration masking graph
         #######
@@ -628,7 +641,10 @@ def score(app, orchestra, cache):
                     orchestration_centroids.append(0)
                     orchestration_all_masking_curves.append(momentary_masking_array)  # !!
 
-
+        if debug:
+            print('masking curves:')
+            print(toc())
+            tic()
         #Stave list for score_component
 
         #Go through instruments
@@ -686,6 +702,11 @@ def score(app, orchestra, cache):
             target_name_array.append(target_pianoroll[j][1])
             target_array.append(bars)
             target_dyn_array.append(dynamics)
+
+        if debug:
+            print('Target arrays:')
+            print(toc())
+            tic()
 
         #######
         ## Do Target feature graph
@@ -786,6 +807,11 @@ def score(app, orchestra, cache):
                     target_centroids.append(0)
                     target_masking_curves_array.append(np.ones(107))  # !!
 
+        if debug:
+            print('Target mfccs etc:')
+            print(toc())
+            tic()
+
         #Map target peaks on masking graph for 3d
         target_peaks_over_masking=[]
         for k in range(len(target_peaks_array)):
@@ -830,7 +856,10 @@ def score(app, orchestra, cache):
         # print(len(orch_inst_per_instr_array['highlights']))
         # print(len(orch_inst_per_instr_array['highlights'][0][0]))
         #Go through individual orchestration masking curves: #!!
-
+        if debug:
+            print('Target 3d graph:')
+            print(toc())
+            tic()
 
         for i in range(len(orchestration_all_masking_curves)):
             #Go through curves in every note entry #!!
@@ -865,6 +894,10 @@ def score(app, orchestra, cache):
             #!!
         #print(orchestration_all_masking_curves)
 
+        if debug:
+            print('Orchestration masking calculations:')
+            print(toc())
+            tic()
 
         ##Divide masking percent array into bars and do color array:
         orchestration_masker_colors_array = [] #!!
@@ -960,6 +993,11 @@ def score(app, orchestra, cache):
         target_color_array_with_bars.append(bar_c)
         #!!orchestration_masker_colors_array.append(bar_orch_color)
 
+        if debug:
+            print('Target colors calculation:')
+            print(toc())
+            tic()
+
         ################
         ### Do orchestration stave_list for pianoroll-component
         ################
@@ -1011,6 +1049,10 @@ def score(app, orchestra, cache):
                 bar = {'name': name, 'clef': clef, 'notes': notes, 'colors': [[col] for col in orch_inst_per_instr_array['highlights'][i][j]]} #orch_inst_per_instr_array['highlights'][i][j]} #, 'highlights': orch_inst_per_instr_array['highlights'][i][j]} #!!, 'highlights': highlights
                 bars.append(bar)
             stave_list.append(bars)
+
+        if debug:
+            print('Orchestration colors:')
+            print(toc())
 
         #####
         ##Append Target into score with masking information
