@@ -1,13 +1,16 @@
 ﻿
-# Score Tool 
+# NEW VERSION 2.0 at https://github.com/upulkkis/Score-Tool-2.0 
+
+# Score Tool (old version)
 An orchestration analysis tool for composers, conductors, musicians and music theorists.
 Copyright (c) 2020 Uljas Pulkkis.
 
 ## How do I use it?
 This is an app for analyzing orchestral scores in your browser. You can use it online or install with pip and launch from your own machine.
 
-### Online version supported by the Sibelius Academy of Music:
-www.score-tool.com
+### Online version of old score-tool supported by the Sibelius Academy of Music:
+old.score-tool.com
+(new version: www.score-tool.com)
 
 ### Local – pip
 ```bash
