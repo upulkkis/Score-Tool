@@ -9,8 +9,8 @@ Copyright (c) 2020 Uljas Pulkkis.
 This is an app for analyzing orchestral scores in your browser. You can use it online or install with pip and launch from your own machine.
 
 ### Online version of old score-tool supported by the Sibelius Academy of Music:
-old.score-tool.com
-(new version: www.score-tool.com)
+https://old.score-tool.com
+(new version: https://score-tool.com)
 
 ### Local – pip
 ```bash
